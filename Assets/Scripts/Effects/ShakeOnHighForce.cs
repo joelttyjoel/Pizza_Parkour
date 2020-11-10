@@ -24,6 +24,6 @@ public class ShakeOnHighForce : MonoBehaviour
             Shaker.ShakeAll(shakePreset);
         }
 
-        Debug.Log(collision.relativeVelocity.magnitude);
+        //Debug.Log(collision.relativeVelocity.magnitude);
     }
 }
