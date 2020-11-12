@@ -13,10 +13,12 @@ public class InteractObjectiveController : MonoBehaviour
     public Transform firstBoxPosition;
     public Vector3 objectiveOffset;
     public GameObject[] allFakeColliders;
+    public GameObject[] allFakeCollidersTriggers;
+    public LayerMask layerMaskToIgnoreForHeadChecks;
     [Header("Drop stuff")]
     public Transform leftDropPosition;
     public Transform rightDropPosition;
-    public LayerMask layerMaskToIgnore;
+    public LayerMask layerMaskToIgnoreForSideChecks;
     public Vector3 centerRaycastsOffset;
     public Vector3[] raycastsLeftCheck;
     public Vector3[] raycastsRightCheck;
@@ -63,8 +65,8 @@ public class InteractObjectiveController : MonoBehaviour
         }
         closestObjectiveDistance = Vector3.Distance(transform.position, closestObjective.position);
 
-        //if withing range
-        if(closestObjectiveDistance < pickupRange)
+        //if withing range and can pickup
+        if(closestObjectiveDistance < pickupRange && PickUpHeadCheck())
         {
             pickUpHint.SetActive(true);
             if (Input.GetKeyDown(KeyCode.R)) PickUpClosestObjective();
@@ -102,6 +104,22 @@ public class InteractObjectiveController : MonoBehaviour
             powerThrow = 0f;
             indicatorPowerThrow.gameObject.SetActive(false);
         }
+    }
+
+    private bool PickUpHeadCheck()
+    {
+        bool canPickUp = false;
+
+        //check if next box space to be picked up is not overlapping with anything
+        Collider2D relevantBoxOnHead = allFakeCollidersTriggers[allObjectivesOnHead.Count].GetComponent<BoxCollider2D>();
+        Collider2D[] colliders = new Collider2D[10];
+        //filter out objectives
+        ContactFilter2D contactFilter = new ContactFilter2D();
+        contactFilter.SetLayerMask(~layerMaskToIgnoreForHeadChecks);
+        int colliderCount = relevantBoxOnHead.OverlapCollider(contactFilter, colliders);
+
+        if (colliderCount < 1) canPickUp = true;
+        return canPickUp;
     }
 
     private void PickUpClosestObjective()
@@ -191,7 +209,7 @@ public class InteractObjectiveController : MonoBehaviour
         sideBool = true;
         for(int i = 0; i < sideToCheck.Length; i++)
         {
-            RaycastHit2D hit = Physics2D.Raycast(origin, sideToCheck[i], sideToCheck[i].magnitude, ~layerMaskToIgnore);
+            RaycastHit2D hit = Physics2D.Raycast(origin, sideToCheck[i], sideToCheck[i].magnitude, ~layerMaskToIgnoreForSideChecks);
             
             if (hit.collider != null)
             {
