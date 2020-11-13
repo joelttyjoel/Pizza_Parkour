@@ -57,16 +57,10 @@ public class InteractObjectiveController : MonoBehaviour
         UpdateFakeColliderOnHead();
 
         //BURST can be added here mm yes but not needed because probably not more than like 20 boxes
-        //find closest objective
-        foreach (Transform a in allAvailableObjectivesInScene)
-        {
-            float currentDistance = Vector3.Distance(transform.position, a.position);
-            if (currentDistance < closestObjectiveDistance) closestObjective = a;
-        }
-        closestObjectiveDistance = Vector3.Distance(transform.position, closestObjective.position);
+        FindClosestObjective();
 
         //if withing range and can pickup
-        if(closestObjectiveDistance < pickupRange && PickUpHeadCheck())
+        if (closestObjectiveDistance < pickupRange && PickUpHeadCheck())
         {
             pickUpHint.SetActive(true);
             if (Input.GetKeyDown(KeyCode.R)) PickUpClosestObjective();
@@ -106,6 +100,41 @@ public class InteractObjectiveController : MonoBehaviour
         }
     }
 
+    public void RemoveObjectiveFromWorld(Transform objectiveToRemove)
+    {
+        for(int i = 0; i < allAvailableObjectivesInScene.Count; i++)
+        {
+            if (allAvailableObjectivesInScene[i] == objectiveToRemove)
+            {
+                Debug.Log(allAvailableObjectivesInScene[i].name);
+                Debug.Log(objectiveToRemove.name);
+                allAvailableObjectivesInScene.RemoveAt(i);
+                Destroy(objectiveToRemove.gameObject);
+                closestObjective = null;
+                closestObjectiveDistance = 999999f;
+                FindClosestObjective();
+                return;
+            }
+        }
+    }
+
+    private void FindClosestObjective()
+    {
+        if(allAvailableObjectivesInScene.Count == 0)
+        {
+            closestObjective = null;
+            closestObjectiveDistance = 999999f;
+            return;
+        }
+        
+        foreach (Transform a in allAvailableObjectivesInScene)
+        {
+            float currentDistance = Vector3.Distance(transform.position, a.position);
+            if (currentDistance < closestObjectiveDistance) closestObjective = a;
+        }
+        closestObjectiveDistance = Vector3.Distance(transform.position, closestObjective.position);
+    }
+
     private bool PickUpHeadCheck()
     {
         bool canPickUp = false;
@@ -124,7 +153,8 @@ public class InteractObjectiveController : MonoBehaviour
 
     private void PickUpClosestObjective()
     {
-        Debug.Log("pick up");
+        //stop decaying
+        closestObjective.GetComponent<ObjectiveSelfController>().StopDecaying();
 
         closestObjective.GetComponent<Rigidbody2D>().simulated = false;
 
@@ -146,7 +176,7 @@ public class InteractObjectiveController : MonoBehaviour
         allObjectivesOnHead.Push(closestObjective);
     }
 
-    private void DropTopObjective()
+    public void DropTopObjective()
     {
         if (allObjectivesOnHead.Count <= 0) return;
 
@@ -157,6 +187,7 @@ public class InteractObjectiveController : MonoBehaviour
         //if both checks fail, cant drop
         if (!canDropLeft && !canDropRight) return;
 
+        //DROP STARTS HERE
         //remove from all on head
         Transform objectToDrop = allObjectivesOnHead.Pop();
         objectToDrop.GetComponent<Rigidbody2D>().simulated = true;
@@ -167,9 +198,12 @@ public class InteractObjectiveController : MonoBehaviour
         //change transform
         objectToDrop.SetParent(objectiveContainer);
 
+        //start decaying
+        objectToDrop.GetComponent<ObjectiveSelfController>().StartDecaying();
+
         //find where to place, hardest part hmmm
         //right with fail on left
-        if(isGoingLeft && canDropLeft)
+        if (isGoingLeft && canDropLeft)
         {
             objectToDrop.transform.position = leftDropPosition.position;
             //apply force in direction of drop
@@ -222,17 +256,17 @@ public class InteractObjectiveController : MonoBehaviour
         //Debug.Log(sideBool);
     }
 
-    //private void OnDrawGizmos()
-    //{
-    //    Vector3 origin = transform.position + centerRaycastsOffset;
-        
-    //    for (int i = 0; i < raycastsLeftCheck.Length; i++)
-    //    {
-    //        Gizmos.DrawLine(origin, origin + raycastsLeftCheck[i]);
-    //    }
-    //    for (int i = 0; i < raycastsRightCheck.Length; i++)
-    //    {
-    //        Gizmos.DrawLine(origin, origin + raycastsRightCheck[i]);
-    //    }
-    //}
+    private void OnDrawGizmos()
+    {
+        Vector3 origin = transform.position + centerRaycastsOffset;
+
+        for (int i = 0; i < raycastsLeftCheck.Length; i++)
+        {
+            Gizmos.DrawLine(origin, origin + raycastsLeftCheck[i]);
+        }
+        for (int i = 0; i < raycastsRightCheck.Length; i++)
+        {
+            Gizmos.DrawLine(origin, origin + raycastsRightCheck[i]);
+        }
+    }
 }
