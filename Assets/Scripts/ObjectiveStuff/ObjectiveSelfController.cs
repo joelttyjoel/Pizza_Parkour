@@ -21,8 +21,10 @@ public class ObjectiveSelfController : MonoBehaviour
 
             if (timerDecaying < 0f)
             {
-                //messy but ok shh might be removed later
-                GameObject.Find("TempPlayer").GetComponent<InteractObjectiveController>().RemoveObjectiveFromWorld(this.transform);
+                //old remove box
+                //GameObject.Find("TempPlayer").GetComponent<InteractObjectiveController>().RemoveObjectiveFromWorld(this.transform);
+                //new reset level
+                SceneController.Instance.ResetCurrentLevel();
             }
         }
     }

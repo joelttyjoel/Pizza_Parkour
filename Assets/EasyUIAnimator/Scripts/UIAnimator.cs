@@ -67,8 +67,12 @@ namespace EasyUIAnimator
             }
 		}
 
-		void Start ()
+		public static void ResetAnimator()
         {
+            instance.animations = new List<UIAnimation>();
+            instance.removeList = new List<UIAnimation>();
+            instance.screenDimension = new Vector2(Screen.width, Screen.height);
+            instance.invertedScreenDimension = new Vector2(1f / Screen.width, 1f / Screen.height);
         }
         
         void Update()
