@@ -14,6 +14,11 @@ public class StaticReferences : MonoBehaviour
         SceneController.Instance.SwitchToLevelByIndex(index);
     }
 
+    public void SceneController_SwitchToNextLevel()
+    {
+        SceneController.Instance.SwitchToNextLevel();
+    }
+
     public void SceneController_ExitGame()
     {
         SceneController.Instance.ExitGame();

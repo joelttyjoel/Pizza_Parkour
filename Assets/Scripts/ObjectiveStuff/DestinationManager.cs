@@ -39,6 +39,8 @@ public class DestinationManager : MonoBehaviour
                 completedDestinations[i] = true;
             }
         }
+
+        CheckCompleteAllDestinations();
     }
 
     public void SetDestinationFailed(GameObject destinationCompleted)
@@ -50,6 +52,17 @@ public class DestinationManager : MonoBehaviour
             {
                 completedDestinations[i] = false;
             }
+        }
+
+        CheckCompleteAllDestinations();
+    }
+
+    public void CheckCompleteAllDestinations()
+    {
+        if (completedDestinationsCount == allDestinations.Length)
+        {
+            SpanningUIController.Instance.ShowWinScreen();
+            GameManager.Instance.UnlockNextLevel();
         }
     }
 }

@@ -54,6 +54,15 @@ public class SpanningUIController : MonoBehaviour
     {
         if (!levelSelectIsShowing)
         {
+            //update buttons
+            Button[] allButtonsInOrderAscending = GameObject.Find("LevelButtons").GetComponentsInChildren<Button>();
+
+            for (int i = 0; i < allButtonsInOrderAscending.Length; i++)
+            {
+                allButtonsInOrderAscending[i].interactable = GameManager.Instance.GetUnlockedStateByIndex(i);
+                if(!GameManager.Instance.GetUnlockedStateByIndex(i)) allButtonsInOrderAscending[i].GetComponent<UIFixedAnimation>().Pause();
+            }
+
             GameObject.Find(levelSelector).GetComponent<UIParallelAnimation>().Play();
             GameObject.Find(winBackgroundToPreventClicks).GetComponent<Image>().enabled = true;
         }
@@ -68,8 +77,6 @@ public class SpanningUIController : MonoBehaviour
 
     public void ResetUI()
     {
-        //UIAnimator.ResetAnimator();
-
         GameObject.Find(levelSelector).transform.position = new Vector3(9999f, 99999f, 99999f);
 
         GameObject.Find(winBackgroundToPreventClicks).GetComponent<Image>().enabled = false;

@@ -8,8 +8,7 @@ public class SceneController : MonoBehaviour
     public bool isInLevel = false;
     public Object mainMenu;
     public Object[] LevelsInOrderAscending;
-
-    private int currentLevelIndex = 0;
+    public int currentLevelIndex = 0;
 
     //singleton
     public static SceneController Instance;
@@ -24,6 +23,16 @@ public class SceneController : MonoBehaviour
             Instance = this;
             DontDestroyOnLoad(this);
         }
+    }
+
+    public void SwitchToNextLevel()
+    {
+        SpanningUIController.Instance.ResetUI();
+
+        currentLevelIndex++;
+        SceneManager.LoadScene(LevelsInOrderAscending[currentLevelIndex].name.ToString());
+
+        isInLevel = true;
     }
 
     public void SwitchToLevelByIndex(int index)

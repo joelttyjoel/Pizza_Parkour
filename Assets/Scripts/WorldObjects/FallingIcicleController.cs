@@ -92,7 +92,7 @@ public class FallingIcicleController : MonoBehaviour
         {
             Debug.Log("Damage Player");
             //for now drop box because fanni
-            GameObject.Find("TempPlayer").GetComponent<InteractObjectiveController>().DropTopObjective();
+            GameObject.Find("TempPlayer").GetComponent<InteractObjectiveController>().DropTopObjective(false);
         }
     }
 

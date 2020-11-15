@@ -22,11 +22,7 @@ public class InteractObjectiveController : MonoBehaviour
     public Vector3 centerRaycastsOffset;
     public Vector3[] raycastsLeftCheck;
     public Vector3[] raycastsRightCheck;
-    private float powerThrow;
-    public float powerPerSecond;
-    public float maxPower;
-    public float powerThrowMultiplier;
-    public Text indicatorPowerThrow;
+    public float powerThrow;
 
     private Transform objectiveContainer = null;
     private Transform closestObjective = null;
@@ -50,6 +46,13 @@ public class InteractObjectiveController : MonoBehaviour
         }
 
         objectiveContainer = GameObject.Find("ObjectiveContainer").transform;
+
+        //put all objectives on head
+        while(allAvailableObjectivesInScene.Count > 0)
+        {
+            FindClosestObjective();
+            PickUpClosestObjective();
+        }
     }
     
     void Update()
@@ -80,23 +83,13 @@ public class InteractObjectiveController : MonoBehaviour
         if (allObjectivesOnHead.Count <= 0) return;
         //-----------------------------
 
-        //if click drop
-        //button down, start charge, on release, drop
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            DropTopObjective(false);
+        }
         if (Input.GetKeyDown(KeyCode.F))
         {
-            indicatorPowerThrow.gameObject.SetActive(true);
-        }
-        if (Input.GetKey(KeyCode.F))
-        {
-            powerThrow += powerPerSecond * Time.deltaTime;
-            if (powerThrow >= maxPower) powerThrow = maxPower;
-            indicatorPowerThrow.text = ((int)powerThrow).ToString();
-        }
-        if (Input.GetKeyUp(KeyCode.F))
-        {
-            DropTopObjective();
-            powerThrow = 0f;
-            indicatorPowerThrow.gameObject.SetActive(false);
+            DropTopObjective(true);
         }
     }
 
@@ -117,6 +110,15 @@ public class InteractObjectiveController : MonoBehaviour
             }
         }
     }
+
+    //not needed because wont be any objectives left when level completed
+    //public void StopAllDecay()
+    //{
+    //    for (int i = 0; i < allAvailableObjectivesInScene.Count; i++)
+    //    {
+    //        allAvailableObjectivesInScene[i].GetComponent<ObjectiveSelfController>().StopDecaying();
+    //    }
+    //}
 
     private void FindClosestObjective()
     {
@@ -176,7 +178,7 @@ public class InteractObjectiveController : MonoBehaviour
         allObjectivesOnHead.Push(closestObjective);
     }
 
-    public void DropTopObjective()
+    public void DropTopObjective(bool shouldThrow)
     {
         if (allObjectivesOnHead.Count <= 0) return;
 
@@ -207,23 +209,23 @@ public class InteractObjectiveController : MonoBehaviour
         {
             objectToDrop.transform.position = leftDropPosition.position;
             //apply force in direction of drop
-            objectToDrop.GetComponent<Rigidbody2D>().AddForce(Vector2.left * powerThrow * powerThrowMultiplier);
+            if (shouldThrow) objectToDrop.GetComponent<Rigidbody2D>().AddForce(Vector2.left * powerThrow);
         }
         else if(canDropRight)
         {
             objectToDrop.transform.position = rightDropPosition.position;
-            objectToDrop.GetComponent<Rigidbody2D>().AddForce(Vector2.right * powerThrow * powerThrowMultiplier);
+            if (shouldThrow) objectToDrop.GetComponent<Rigidbody2D>().AddForce(Vector2.right * powerThrow);
         }
         //left with fail on right
         if (!isGoingLeft && canDropRight)
         {
             objectToDrop.transform.position = rightDropPosition.position;
-            objectToDrop.GetComponent<Rigidbody2D>().AddForce(Vector2.right * powerThrow * powerThrowMultiplier);
+            if (shouldThrow) objectToDrop.GetComponent<Rigidbody2D>().AddForce(Vector2.right * powerThrow);
         }
         else if (canDropLeft)
         {
             objectToDrop.transform.position = leftDropPosition.position;
-            objectToDrop.GetComponent<Rigidbody2D>().AddForce(Vector2.left * powerThrow * powerThrowMultiplier);
+            if (shouldThrow) objectToDrop.GetComponent<Rigidbody2D>().AddForce(Vector2.left * powerThrow);
         }
         //else, just stays on head
     }
