@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+[RequireComponent(typeof(MovementScript))]
 public class InteractObjectiveController : MonoBehaviour
 {
     [Header("References")]
@@ -35,8 +36,6 @@ public class InteractObjectiveController : MonoBehaviour
     private bool canDropLeft = false;
     private bool canDropRight = false;
 
-    //should be in movement script
-    private bool isGoingLeft = false;
 
     private Stack<Transform> allObjectivesOnHead = new Stack<Transform>();
 
@@ -76,8 +75,7 @@ public class InteractObjectiveController : MonoBehaviour
             pickUpHint.SetActive(false);
         }
 
-        if (Input.GetKeyDown(KeyCode.D)) isGoingLeft = false;
-        else if (Input.GetKey(KeyCode.A)) isGoingLeft = true;
+
 
         //CheckSide(raycastsLeftCheck, canDropLeft);
         //CheckSide(raycastsRightCheck, canDropRight);
@@ -169,6 +167,7 @@ public class InteractObjectiveController : MonoBehaviour
 
         //find where to place, hardest part hmmm
         //right with fail on left
+        bool isGoingLeft = !GetComponent<MovementScript>().IsFacingRight();
         if(isGoingLeft && canDropLeft)
         {
             objectToDrop.transform.position = leftDropPosition.position;
