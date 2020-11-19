@@ -61,8 +61,11 @@ public class DestinationManager : MonoBehaviour
     {
         if (completedDestinationsCount == allDestinations.Length)
         {
-            SpanningUIController.Instance.ShowWinScreen();
+            LevelClockController.Instance.runClock = false;
             GameManager.Instance.UnlockNextLevel();
+            GameManager.Instance.CheckCurrentScoreHighscore();
+
+            SpanningUIController.Instance.ShowWinScreen();
         }
     }
 }

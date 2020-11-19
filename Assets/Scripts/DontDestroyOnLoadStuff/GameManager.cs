@@ -47,10 +47,14 @@ public class GameManager : MonoBehaviour
     {
         for (int i = 0; i < SceneController.Instance.LevelsInOrderAscending.Length; i++)
         {
+            //levels cleared
             //set all to 0
             PlayerPrefs.SetInt(SceneController.Instance.LevelsInOrderAscending[i].ToString(), 0);
-            //set first to 1
+            //set first to 1, is because first level is unlocked by default
             PlayerPrefs.SetInt(SceneController.Instance.LevelsInOrderAscending[0].ToString(), 1);
+            //levels highscore
+            //set all to shit scores
+            PlayerPrefs.SetFloat(SceneController.Instance.LevelsInOrderAscending[i].ToString() + "_HighScore", 0f);
         }
     }
 
@@ -61,6 +65,22 @@ public class GameManager : MonoBehaviour
         {
             Debug.Log("unlock: " + SceneController.Instance.LevelsInOrderAscending[SceneController.Instance.currentLevelIndex + 1].ToString());
             PlayerPrefs.SetInt(SceneController.Instance.LevelsInOrderAscending[SceneController.Instance.currentLevelIndex + 1].ToString(), 1);
+        }
+    }
+
+    public void CheckCurrentScoreHighscore()
+    {
+        //if is 0, then is first time setting score, then not new highscore just update score
+        if(PlayerPrefs.GetFloat(SceneController.Instance.LevelsInOrderAscending[SceneController.Instance.currentLevelIndex].ToString() + "_HighScore") == 0f)
+        {
+            Debug.Log("New Score Added");
+            PlayerPrefs.SetFloat(SceneController.Instance.LevelsInOrderAscending[SceneController.Instance.currentLevelIndex].ToString() + "_HighScore", LevelClockController.Instance.currentTimeClock);
+        }
+        //if not 0, then lets go compare
+        else if(LevelClockController.Instance.currentTimeClock < PlayerPrefs.GetFloat(SceneController.Instance.LevelsInOrderAscending[SceneController.Instance.currentLevelIndex].ToString() + "_HighScore"))
+        {
+            Debug.Log("New HighScore!!");
+            PlayerPrefs.SetFloat(SceneController.Instance.LevelsInOrderAscending[SceneController.Instance.currentLevelIndex].ToString() + "_HighScore", LevelClockController.Instance.currentTimeClock);
         }
     }
 

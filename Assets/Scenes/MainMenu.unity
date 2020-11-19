@@ -2008,6 +2008,8 @@ MonoBehaviour:
   winBackgroundToPreventClicks: NonClickBackground
   winImage: WinImage
   winMenu: BackgroundButtons
+  scoreText: ScoreText
+  highscoreText: HighscoreText
   levelSelector: LevelSelector
 --- !u!114 &2077562797
 MonoBehaviour:
