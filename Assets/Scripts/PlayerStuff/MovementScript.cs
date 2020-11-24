@@ -8,6 +8,7 @@ public class MovementScript : MonoBehaviour
 {
     Collider2D col;
     Rigidbody2D rb;
+    Vector2 groundedOrigin;
     Vector2 groundRayDir;
     Vector2 wallRayDir;
     Vector2 newPos;
@@ -110,6 +111,8 @@ public class MovementScript : MonoBehaviour
     [SerializeField,
         Tooltip("The minimum distance from the ground the collider bottom of the player needs to be to count as grounded.")]
     float groundedOffset = 0.1f;
+    [SerializeField]
+    float groundRayOriginOffset = 0f;
     [SerializeField,
         Tooltip("The minimum distance from the wall to walljump for example.")]
     float wallOffset = 0.1f;
@@ -299,14 +302,22 @@ public class MovementScript : MonoBehaviour
 
     bool IsPlayerGrounded()
     {
+        groundedOrigin = new Vector3(transform.position.x, transform.position.y + groundRayOriginOffset);
         Vector2 boxSize = new Vector2(col.bounds.size.x - 0.01f, groundedOffset);
-        RaycastHit2D hit = Physics2D.BoxCast(transform.position, boxSize, 0, groundRayDir, groundedOffset);
+        RaycastHit2D hit = Physics2D.BoxCast(new Vector3(transform.position.x, transform.position.y + groundRayOriginOffset), boxSize, 0, groundRayDir, groundedOffset);
 
         if (hit.collider != null)
         {
             hasAirJumped = false;
             //ResetCoyote();
             //if hit ground
+
+            if(hit.collider == col)
+            {
+                Debug.LogError("Grounded raycast hit player-collider, try changing groundRayOriginOffset.", this);
+
+            }
+
             return true;
         }
         return false;
@@ -340,7 +351,7 @@ public class MovementScript : MonoBehaviour
 
         //Debug grounded raycast
         Gizmos.color = Color.cyan;
-        Gizmos.DrawRay(transform.position, groundRayDir);
+        Gizmos.DrawRay(new Vector3(transform.position.x, transform.position.y + groundRayOriginOffset), groundRayDir);
 
         if (Application.isPlaying)
         {
