@@ -33,11 +33,13 @@ public class MovementEditor : Editor
         };
         jumpAttributes = new SerializedProperty[]
         {
-            serializedObject.FindProperty("jumpAccel"),
-            serializedObject.FindProperty("minJumpHeight"),
-            serializedObject.FindProperty("minAirJumpHeight"),
+            serializedObject.FindProperty("jumpVelocity"),
+            serializedObject.FindProperty("shortJumpMultiplier"),
+            serializedObject.FindProperty("shortAirJumpMultiplier"),
+            serializedObject.FindProperty("fallMultiplier"),
             serializedObject.FindProperty("coyoteTime"),
             serializedObject.FindProperty("jumpBufferTime"),
+            serializedObject.FindProperty("apexHeight"),
             serializedObject.FindProperty("apexSpeed"),
             serializedObject.FindProperty("antiGravityApexMagnitude"),
             //serializedObject.FindProperty("stickyFeetFriction"),

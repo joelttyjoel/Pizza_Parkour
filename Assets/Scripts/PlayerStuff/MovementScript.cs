@@ -9,15 +9,19 @@ public class MovementScript : MonoBehaviour
     Collider2D col;
     Rigidbody2D rb;
     Vector2 groundRayDir;
+    Vector2 wallRayDir;
+    Vector2 newPos;
 
     bool grounded;
     bool isJumping;
     bool jumpBuffer;
     bool facingRight;   //make sure to initilize to correct direction
     bool hasAirJumped;
-    bool acceleratedJumpLastFrame;
-    float heightBeforeJump;
-    float lastInput;
+
+    float lastVel;
+
+    int lastIn;
+    
 
     #region timers
     float jAccelTimer;
@@ -30,61 +34,74 @@ public class MovementScript : MonoBehaviour
     //and therefore needs the 'HideInInspector' attribute (to avoid serializing twice)
     #region ground movement
     [HideInInspector, SerializeField]
-    float maxSpeed = 10f;
+    float maxSpeed = 14f;
     [HideInInspector, SerializeField,
         Tooltip("How long (in seconds) from holding movement key to reach max acceleration.")]
     float timeToMaxAccel = 0.1f;
     [HideInInspector, SerializeField]
-    float maxAcceleration = 150f;
+    float maxAcceleration = 7f;
     [HideInInspector, SerializeField,
         Tooltip("How the acceleration curve looks like. Current Acceleration = (Max Acceleration * y-value).\n" +
         "Y-value at x-value 1 is reached after 'Time To Max Accel' seconds.")]
-    AnimationCurve accelCurve = new AnimationCurve(new Keyframe(0, 0.7f), new Keyframe(1, 1));
+    AnimationCurve accelCurve = new AnimationCurve(new Keyframe(0, 1f), new Keyframe(1, 1f));
     #endregion
 
     #region air movement
-    [HideInInspector, SerializeField]
+    [HideInInspector, SerializeField,
+        Tooltip("NOT IN USE.")]
     float airVelocity;
-    [HideInInspector, SerializeField]
+    [HideInInspector, SerializeField,
+        Tooltip("NOT IN USE.")]
     float maxAirSpeed;
     [HideInInspector, SerializeField,
-        Tooltip("Maximum fallspeed.")]
-    float maxFallSpeed = -1;    //clamp falling speed
+        Min(5),
+        Tooltip("Maximum vertical speed.")]
+    float maxFallSpeed = 50;    //clamp falling speed
     [HideInInspector, SerializeField, /* Range(0, 1), */
-        Tooltip("By how much height can the player miss a jump (legs hit top part of platform-side) and still be helped over it.")]
+        Tooltip("NOT IN USE. By how much height can the player miss a jump (legs hit top part of platform-side) and still be helped over it.")]
     float catchHeight = -1;  //catch missed jumps, could be a percentage of the player-height
     [HideInInspector, SerializeField, /*[Range(0, 1), */
-        Tooltip("By how much width can the player be off the collider-side on above platforms while jumping, and still be helped past it.")]
+        Tooltip("NOT IN USE. By how much width can the player be off the collider-side on above platforms while jumping, and still be helped past it.")]
     float bumpedHeadWidth = -1; //bumped head correction, could be percentage of player-width
     #endregion
 
     #region jumping
     [HideInInspector, SerializeField,
         Tooltip("The amount of upwards-acceleration applied to the player each frame while jumping")]
-    float jumpAccel = 5f;
+    float jumpVelocity = 20.5f;
     [HideInInspector, SerializeField,
-        Tooltip("The height of jump when tapping the jump button (while grounded), opposed to holding it until apex is reached.")]
-    float minJumpHeight = -1; // early fall
+        Tooltip("Gravity multiplier for short-jump, determines how high a short-jump is."),
+        Min(0f)]
+    float shortJumpMultiplier = 13; // early fall
     [HideInInspector, SerializeField,
-        Tooltip("The height of jump when tapping the jump button (while airbourne), opposed to holding it until apex is reached.")]
-    float minAirJumpHeight = -1; // early fall
+        Tooltip("NOT IN USE."),
+        Min(0f)]
+    float shortAirJumpMultiplier = 1; // early fall (double jump)
     [HideInInspector, SerializeField,
-        Tooltip("How many milliseconds after running of a platform can the player still perform a normal jump."),
+        Tooltip("Gravity multiplier"),
+        Min(0f)]
+    float fallMultiplier = 11.3f; // early fall
+    [HideInInspector, SerializeField,
+        Tooltip("NOT IN USE. How many milliseconds after running of a platform can the player still perform a normal jump."),
         Range(0, 500)]
     float coyoteTime = -1;  //coyote time in ms
     [HideInInspector, SerializeField,
-        Tooltip("Duration (in milliseconds) before being grounded that the jump-input still registers, and happens when ground is hit."),
+        Tooltip("NOT IN USE. Duration (in milliseconds) before being grounded that the jump-input still registers, and happens when ground is hit."),
         Range(0, 300)]
     float jumpBufferTime = -1;  //jump buffering
     //[HideInInspector, SerializeField,
     //    Tooltip("")]
     //float stickyFeetFriction = -1;  //sticky feet on land, skip this?
     [HideInInspector, SerializeField,
-        Tooltip("Speed of direction change mid-jump. Percentage of normal direction-change."),
+        Tooltip("NOT IN USE. Determines the apex-height of the jump, percentage of max jump-height."),
+    Range(0.01f, 1)]
+    float apexHeight = 0.9f;   //apex
+    [HideInInspector, SerializeField,
+        Tooltip("NOT IN USE. Speed of direction change mid-jump. Percentage of normal direction-change."),
     Range(0.01f, 1)]
     float apexSpeed = -1;   //speed apex
     [HideInInspector, SerializeField,
-        Tooltip("Percentage of normal gravity the player experiences at the apex of jumps. 1 is normal gravity."),
+        Tooltip("NOT IN USE. Percentage of normal gravity the player experiences at the apex of jumps. 1 is normal gravity."),
         Range(0.01f, 1)]
     float antiGravityApexMagnitude = -1; // anti gravity apex
     #endregion
@@ -93,6 +110,13 @@ public class MovementScript : MonoBehaviour
     [SerializeField,
         Tooltip("The minimum distance from the ground the collider bottom of the player needs to be to count as grounded.")]
     float groundedOffset = 0.1f;
+    [SerializeField,
+        Tooltip("The minimum distance from the wall to walljump for example.")]
+    float wallOffset = 0.1f;
+    [SerializeField]
+    float gratvityScale = 5f;
+    [SerializeField]
+    bool canDoubleJump = true;
 
     public bool IsFacingRight()
     {
@@ -104,20 +128,25 @@ public class MovementScript : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         col = GetComponent<Collider2D>();
         rb.interpolation = RigidbodyInterpolation2D.Interpolate;    //smoothes out movement
+        rb.collisionDetectionMode = CollisionDetectionMode2D.Continuous;    //prevent rb from moving through/into stuff at high velocities
+        rb.freezeRotation = true;   //freeze z-rotation
 
         //float halvedHeight = col.bounds.extents.y;
         groundRayDir = new Vector2(0, -groundedOffset);
+        wallRayDir = new Vector2(wallOffset, 0);
 
         //init timers
         ResetCoyote();
 
+        //initialize facingRight to correct direction according to graphics
     }
 
     void Update()
     {
-        float h = Input.GetAxisRaw("Horizontal");
-        //record j until jumpBuffer end
-        bool j = Input.GetButton("Jump");
+        rb.gravityScale = gratvityScale;    //temp, move to start when value is tweaked enough
+
+        int hInt = Mathf.RoundToInt(Input.GetAxisRaw("Horizontal"));
+        bool j = Input.GetButtonDown("Jump");                           //record j until jumpBuffer end
 
         // jumpBuffer &= JumpBuffer(); //jumpBuffer = started buffer AND within buffer-time
 
@@ -127,84 +156,75 @@ public class MovementScript : MonoBehaviour
 
         if (j/* || jumpBuffer*/)
         {
-            grounded = IsPlayerGrounded();  //Only raycast when player tries to jump
+            grounded = IsPlayerGrounded();
             if (grounded/* || withinCoyote*/)
             {
                 isJumping = true;   //StartJump();
             }
-            //else    //Tried to jump while airbourne
-            //{
-            //    if (!hasAirJumped)      //"Double jump"
-            //    {
-            //        //remember to reset hasAirJumped after touching ground again (grounded)
-            //        hasAirJumped = true;    //StartAirJump();
-            //    }
-            //    else if (!jumpBuffer)   //Jump-Buffering, cant be triggered by a buffered jump
-            //    {
-            //        jumpBuffer = true;
-            //    }
-            //    //StartJumpBuffer();  //Reset buffer-timer every ungrounded jump-input, whether already buffering or not.
-            //}
+            else    //Tried to jump while airbourne
+            {
+                if (!hasAirJumped && canDoubleJump)      //"Double jump"
+                {
+                    hasAirJumped = true;    //reset hasAirJumped when grounded again
+                    isJumping = true;
+                }
+                //    else if (!jumpBuffer)   //Jump-Buffering, cant be triggered by a buffered jump
+                //    {
+                //        jumpBuffer = true;
+                //    }
+                //    //StartJumpBuffer();  //Reset buffer-timer every ungrounded jump-input, whether already buffering or not.
+            }
         }
+        else if (!j)
+            isJumping = false;
 
         Jumping();
 
+        ///Horizontal movement (ground)
+        //TODO: use a friction value when adding velocity and stopping:
+        //Friction = 1 == normal snappy, full stop on same frame as release of key,
+        //Friction = 0 == never stops and cant accelerate. 
 
-        if (!Mathf.Approximately(h, 0))
+        if (hInt != 0 && !IsAtWall(hInt))
         {
+            if (lastIn != hInt)     //switched direction
+            {
+                accelTimer = 0;
+                facingRight = !facingRight;
+            }
+
             float currentAccel = GetAcceleration();
             Vector2 addedVelocity = new Vector2(maxSpeed * currentAccel * Time.deltaTime, 0);
+            rb.velocity += addedVelocity * hInt;
 
-            if (Mathf.Abs(rb.velocity.x) + addedVelocity.x >= maxSpeed)
+            if (lastIn == hInt && lastVel > Mathf.Abs(rb.velocity.x))    //didnt switch direction, but somehow decelerated (can happen when landing)
             {
-                print("max");
-                rb.velocity = new Vector2(maxSpeed * h, rb.velocity.y);
+                rb.velocity = new Vector2(lastVel * hInt, rb.velocity.y);
             }
-            else
-            {
-                //Vector2 moveForce = new Vector2(h, 0) * accel * rb.mass;    //F = m * a 
-                //rb.AddForce(moveForce * 100 * Time.deltaTime);              //mult by 100 to cancel out deltaTime, to avoid having large numbers for acceleration.
-                //facingRight = rb.velocity.x > 0 ? true : false;
-
-                rb.velocity += addedVelocity * h;
-
-                lastInput = h;
-                print("accel");
-            }
-
-            if (lastInput > h)   //Decelerating or switch of direction
-            {
-                if (lastInput > 0 && h < 0)     //Switched direction
-                {
-                    rb.velocity = new Vector2(0, rb.velocity.y);
-                }
-                else
-                {
-
-                }
-            }
-            else if (lastInput < h)
-            {
-                if (lastInput < 0 && h > 0)
-                {
-                    rb.velocity = new Vector2(0, rb.velocity.y);
-                }
-            }
-
+            lastVel = Mathf.Abs(rb.velocity.x);
         }
         else
         {
             accelTimer = 0;
-            rb.velocity = new Vector2(0, rb.velocity.y);    //Player instantly stops when not moving in horizontally.
+            rb.velocity = new Vector2(0, rb.velocity.y);    //Player instantly stops when not moving horizontally.
+                                                            //Need to stop the player using friction or something, cant affect velocity directly.
         }
+        lastIn = hInt;
 
-        /*
-        //horizontal movement
-        if grounded
-            ground-movement
-        else
-            air-movement
-        */
+        SpeedClamp();
+    }
+
+    private void FixedUpdate()
+    {
+        grounded = IsPlayerGrounded();  //kind of expensive, but we may have the budget for it. 
+    }
+
+    private void SpeedClamp()
+    {
+        if (Mathf.Abs(rb.velocity.x) > maxSpeed)
+            rb.velocity = new Vector2(maxSpeed * Mathf.Sign(rb.velocity.x), rb.velocity.y);
+        if (Mathf.Abs(rb.velocity.y) > maxFallSpeed)
+            rb.velocity = new Vector2(rb.velocity.x, maxFallSpeed * Mathf.Sign(rb.velocity.y));
     }
 
     private float GetAcceleration()
@@ -212,7 +232,7 @@ public class MovementScript : MonoBehaviour
         float t;
         if (accelTimer > timeToMaxAccel)
         {
-            t = 1;
+            t = timeToMaxAccel;
         }
         else
         {
@@ -232,7 +252,6 @@ public class MovementScript : MonoBehaviour
             UnityEditor.EditorGUIUtility.PingObject(this);
         }
 #endif
-
         return currentAccel;
     }
 
@@ -280,23 +299,33 @@ public class MovementScript : MonoBehaviour
 
     bool IsPlayerGrounded()
     {
+        Vector2 boxSize = new Vector2(col.bounds.size.x - 0.01f, groundedOffset);
+        RaycastHit2D hit = Physics2D.BoxCast(transform.position, boxSize, 0, groundRayDir, groundedOffset);
 
-        Ray2D r = new Ray2D(transform.position, groundRayDir); //use -normal of ground instead of v.down for slopes?
-
-        /*                                      
-        groundRayLength
-        if raycast hit ground
+        if (hit.collider != null)
+        {
             hasAirJumped = false;
-            ResetCoyote();
+            //ResetCoyote();
+            //if hit ground
             return true;
+        }
+        return false;
+    }
 
-        else        //coyote time
-            start coyote-timer
-            if !on timer-end: return true;
-            on timer-end: grounded = false
-            */
+    bool IsAtWall(int dir)
+    {
+        Vector3 rayOrigin = transform.position + new Vector3(col.bounds.extents.x * dir, col.bounds.extents.y);
+        Vector2 boxSize = new Vector2(wallOffset, col.bounds.size.y);
+        RaycastHit2D hit = Physics2D.BoxCast(rayOrigin, boxSize, 0, wallRayDir, wallOffset);
 
-        return true;    //temp
+        if (hit.collider != null)
+        {            
+            if (Mathf.Round(Vector2.Dot(Vector2.left * dir, hit.normal)) == 1)  //check if wall
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
 #if UNITY_EDITOR    //Redundant?
@@ -312,45 +341,41 @@ public class MovementScript : MonoBehaviour
         //Debug grounded raycast
         Gizmos.color = Color.cyan;
         Gizmos.DrawRay(transform.position, groundRayDir);
+
+        if (Application.isPlaying)
+        {
+            Vector3 rayOrigin = transform.position + new Vector3(col.bounds.extents.x, col.bounds.extents.y);
+            Debug.DrawRay(rayOrigin, wallRayDir, Color.blue);
+            rayOrigin = transform.position + new Vector3(col.bounds.extents.x * -1, col.bounds.extents.y);
+            Debug.DrawRay(rayOrigin, wallRayDir * -1, Color.blue);
+        }
+
     }
 #endif
 
     void Jumping()
     {
+        //Draw a jumpCurve directly using this formula? By setting height at time t directly. 
+        //This way we easily can set max jump height and have it affect velocity and time, and draw the curve, or change one of the other variables etc. 
+        //Vertical Jump Physics Equation:
+        //https://sciencing.com/calculate-jump-height-acceleration-8771263.html
+
+        //v0 is jumpVelocity
 
         if (isJumping)
         {
-            if (!acceleratedJumpLastFrame)   //initial jump
-            {
-                //s = v*t
-                //t = s/v       
-
-                if (jAccelTimer < minJumpHeight / jumpAccel)    //need to change if variable jump-acceleration
-                {
-                    jAccelTimer += Time.deltaTime;
-
-                    Vector2 jumpVel = new Vector2(0, jumpAccel /* * maxJumpSpeed*/);    //implement similar acceleration curve as horizontal movement
-                    rb.velocity = jumpVel * Time.deltaTime;
-                }
-                else    //initial jump completed, probably need to change before implementing continous jumping
-                {
-                    jAccelTimer = 0;
-                    isJumping = false;
-                }
-            }
-            //else
-            //{
-            //    if not reached maxjump
-            //    Vector2 jumpVel = new Vector2(0, jumpAccel /* * maxJumpSpeed*/);    //implement similar acceleration curve as horizontal movement
-            //    rb.velocity = jumpVel * Time.deltaTime;
-            //    Keep adding jumpAccel until maxJump is reached.
-            //    Reach maxJump after 
-            //}
-
-            acceleratedJumpLastFrame = true;
+            rb.velocity = Vector2.up * jumpVelocity;
+            isJumping = false;
         }
 
-
+        if (rb.velocity.y < 0)   //falling
+        {
+            rb.velocity += Vector2.up * Physics2D.gravity.y * (fallMultiplier - 1) * Time.deltaTime;
+        }
+        else if (rb.velocity.y > 0 && !Input.GetButton("Jump"))  //upwards velocity & realeased jump-button (not max jump)
+        {
+            rb.velocity += Vector2.up * Physics2D.gravity.y * (shortJumpMultiplier - 1) * Time.deltaTime;
+        }
     }
 
 }
