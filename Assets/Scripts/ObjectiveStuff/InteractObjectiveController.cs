@@ -23,11 +23,7 @@ public class InteractObjectiveController : MonoBehaviour
     public Vector3 centerRaycastsOffset;
     public Vector3[] raycastsLeftCheck;
     public Vector3[] raycastsRightCheck;
-    private float powerThrow;
-    public float powerPerSecond;
-    public float maxPower;
-    public float powerThrowMultiplier;
-    public Text indicatorPowerThrow;
+    public float powerThrow;
 
     private Transform objectiveContainer = null;
     private Transform closestObjective = null;
@@ -49,6 +45,13 @@ public class InteractObjectiveController : MonoBehaviour
         }
 
         objectiveContainer = GameObject.Find("ObjectiveContainer").transform;
+
+        //put all objectives on head
+        while(allAvailableObjectivesInScene.Count > 0)
+        {
+            FindClosestObjective();
+            PickUpClosestObjective();
+        }
     }
     
     void Update()
@@ -56,16 +59,10 @@ public class InteractObjectiveController : MonoBehaviour
         UpdateFakeColliderOnHead();
 
         //BURST can be added here mm yes but not needed because probably not more than like 20 boxes
-        //find closest objective
-        foreach (Transform a in allAvailableObjectivesInScene)
-        {
-            float currentDistance = Vector3.Distance(transform.position, a.position);
-            if (currentDistance < closestObjectiveDistance) closestObjective = a;
-        }
-        closestObjectiveDistance = Vector3.Distance(transform.position, closestObjective.position);
+        FindClosestObjective();
 
         //if withing range and can pickup
-        if(closestObjectiveDistance < pickupRange && PickUpHeadCheck())
+        if (closestObjectiveDistance < pickupRange && PickUpHeadCheck())
         {
             pickUpHint.SetActive(true);
             if (Input.GetKeyDown(KeyCode.R)) PickUpClosestObjective();
@@ -84,24 +81,58 @@ public class InteractObjectiveController : MonoBehaviour
         if (allObjectivesOnHead.Count <= 0) return;
         //-----------------------------
 
-        //if click drop
-        //button down, start charge, on release, drop
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            DropTopObjective(false);
+        }
         if (Input.GetKeyDown(KeyCode.F))
         {
-            indicatorPowerThrow.gameObject.SetActive(true);
+            DropTopObjective(true);
         }
-        if (Input.GetKey(KeyCode.F))
+    }
+
+    public void RemoveObjectiveFromWorld(Transform objectiveToRemove)
+    {
+        for(int i = 0; i < allAvailableObjectivesInScene.Count; i++)
         {
-            powerThrow += powerPerSecond * Time.deltaTime;
-            if (powerThrow >= maxPower) powerThrow = maxPower;
-            indicatorPowerThrow.text = ((int)powerThrow).ToString();
+            if (allAvailableObjectivesInScene[i] == objectiveToRemove)
+            {
+                Debug.Log(allAvailableObjectivesInScene[i].name);
+                Debug.Log(objectiveToRemove.name);
+                allAvailableObjectivesInScene.RemoveAt(i);
+                Destroy(objectiveToRemove.gameObject);
+                closestObjective = null;
+                closestObjectiveDistance = 999999f;
+                FindClosestObjective();
+                return;
+            }
         }
-        if (Input.GetKeyUp(KeyCode.F))
+    }
+
+    //not needed because wont be any objectives left when level completed
+    //public void StopAllDecay()
+    //{
+    //    for (int i = 0; i < allAvailableObjectivesInScene.Count; i++)
+    //    {
+    //        allAvailableObjectivesInScene[i].GetComponent<ObjectiveSelfController>().StopDecaying();
+    //    }
+    //}
+
+    private void FindClosestObjective()
+    {
+        if(allAvailableObjectivesInScene.Count == 0)
         {
-            DropTopObjective();
-            powerThrow = 0f;
-            indicatorPowerThrow.gameObject.SetActive(false);
+            closestObjective = null;
+            closestObjectiveDistance = 999999f;
+            return;
         }
+        
+        foreach (Transform a in allAvailableObjectivesInScene)
+        {
+            float currentDistance = Vector3.Distance(transform.position, a.position);
+            if (currentDistance < closestObjectiveDistance) closestObjective = a;
+        }
+        closestObjectiveDistance = Vector3.Distance(transform.position, closestObjective.position);
     }
 
     private bool PickUpHeadCheck()
@@ -122,7 +153,8 @@ public class InteractObjectiveController : MonoBehaviour
 
     private void PickUpClosestObjective()
     {
-        Debug.Log("pick up");
+        //stop decaying
+        closestObjective.GetComponent<ObjectiveSelfController>().StopDecaying();
 
         closestObjective.GetComponent<Rigidbody2D>().simulated = false;
 
@@ -144,7 +176,7 @@ public class InteractObjectiveController : MonoBehaviour
         allObjectivesOnHead.Push(closestObjective);
     }
 
-    private void DropTopObjective()
+    public void DropTopObjective(bool shouldThrow)
     {
         if (allObjectivesOnHead.Count <= 0) return;
 
@@ -155,6 +187,7 @@ public class InteractObjectiveController : MonoBehaviour
         //if both checks fail, cant drop
         if (!canDropLeft && !canDropRight) return;
 
+        //DROP STARTS HERE
         //remove from all on head
         Transform objectToDrop = allObjectivesOnHead.Pop();
         objectToDrop.GetComponent<Rigidbody2D>().simulated = true;
@@ -165,6 +198,9 @@ public class InteractObjectiveController : MonoBehaviour
         //change transform
         objectToDrop.SetParent(objectiveContainer);
 
+        //start decaying
+        objectToDrop.GetComponent<ObjectiveSelfController>().StartDecaying();
+
         //find where to place, hardest part hmmm
         //right with fail on left
         bool isGoingLeft = !GetComponent<MovementScript>().IsFacingRight();
@@ -172,23 +208,23 @@ public class InteractObjectiveController : MonoBehaviour
         {
             objectToDrop.transform.position = leftDropPosition.position;
             //apply force in direction of drop
-            objectToDrop.GetComponent<Rigidbody2D>().AddForce(Vector2.left * powerThrow * powerThrowMultiplier);
+            if (shouldThrow) objectToDrop.GetComponent<Rigidbody2D>().AddForce(Vector2.left * powerThrow);
         }
         else if(canDropRight)
         {
             objectToDrop.transform.position = rightDropPosition.position;
-            objectToDrop.GetComponent<Rigidbody2D>().AddForce(Vector2.right * powerThrow * powerThrowMultiplier);
+            if (shouldThrow) objectToDrop.GetComponent<Rigidbody2D>().AddForce(Vector2.right * powerThrow);
         }
         //left with fail on right
         if (!isGoingLeft && canDropRight)
         {
             objectToDrop.transform.position = rightDropPosition.position;
-            objectToDrop.GetComponent<Rigidbody2D>().AddForce(Vector2.right * powerThrow * powerThrowMultiplier);
+            if (shouldThrow) objectToDrop.GetComponent<Rigidbody2D>().AddForce(Vector2.right * powerThrow);
         }
         else if (canDropLeft)
         {
             objectToDrop.transform.position = leftDropPosition.position;
-            objectToDrop.GetComponent<Rigidbody2D>().AddForce(Vector2.left * powerThrow * powerThrowMultiplier);
+            if (shouldThrow) objectToDrop.GetComponent<Rigidbody2D>().AddForce(Vector2.left * powerThrow);
         }
         //else, just stays on head
     }
@@ -221,17 +257,17 @@ public class InteractObjectiveController : MonoBehaviour
         //Debug.Log(sideBool);
     }
 
-    //private void OnDrawGizmos()
-    //{
-    //    Vector3 origin = transform.position + centerRaycastsOffset;
-        
-    //    for (int i = 0; i < raycastsLeftCheck.Length; i++)
-    //    {
-    //        Gizmos.DrawLine(origin, origin + raycastsLeftCheck[i]);
-    //    }
-    //    for (int i = 0; i < raycastsRightCheck.Length; i++)
-    //    {
-    //        Gizmos.DrawLine(origin, origin + raycastsRightCheck[i]);
-    //    }
-    //}
+    private void OnDrawGizmos()
+    {
+        Vector3 origin = transform.position + centerRaycastsOffset;
+
+        for (int i = 0; i < raycastsLeftCheck.Length; i++)
+        {
+            Gizmos.DrawLine(origin, origin + raycastsLeftCheck[i]);
+        }
+        for (int i = 0; i < raycastsRightCheck.Length; i++)
+        {
+            Gizmos.DrawLine(origin, origin + raycastsRightCheck[i]);
+        }
+    }
 }

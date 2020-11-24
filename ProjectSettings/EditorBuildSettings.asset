@@ -14,4 +14,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/TryingStuffJoel.unity
     guid: f8c20f01799883646bc04f0b48ba443e
+  - enabled: 1
+    path: Assets/Scenes/Level2.unity
+    guid: 685d22bf31f70c44b82950f075d9b6ce
   m_configObjects: {}

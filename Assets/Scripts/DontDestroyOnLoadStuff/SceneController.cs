@@ -5,10 +5,10 @@ using UnityEngine.SceneManagement;
 
 public class SceneController : MonoBehaviour
 {
+    public bool isInLevel = false;
     public Object mainMenu;
     public Object[] LevelsInOrderAscending;
-
-    private bool levelSelectIsShowing = false;
+    public int currentLevelIndex = 0;
 
     //singleton
     public static SceneController Instance;
@@ -25,33 +25,42 @@ public class SceneController : MonoBehaviour
         }
     }
 
+    public void SwitchToNextLevel()
+    {
+        SpanningUIController.Instance.ResetUI();
+
+        currentLevelIndex++;
+        SceneManager.LoadScene(LevelsInOrderAscending[currentLevelIndex].name.ToString());
+
+        isInLevel = true;
+    }
+
     public void SwitchToLevelByIndex(int index)
     {
+        SpanningUIController.Instance.ResetUI();
+
+        currentLevelIndex = index;
         SceneManager.LoadScene(LevelsInOrderAscending[index].name.ToString());
+
+        isInLevel = true;
+    }
+
+    public void ResetCurrentLevel()
+    {
+        SwitchToLevelByIndex(currentLevelIndex);
     }
 
     public void GoToMainMenu()
     {
+        SpanningUIController.Instance.ResetUI();
+
         SceneManager.LoadScene(mainMenu.name);
 
-        //when returning to main menu, reset level select variable because its now hidden
-        levelSelectIsShowing = false;
+        isInLevel = false;
     }
 
     public void ExitGame()
     {
         Application.Quit();
-    }
-
-    public void ToggleLevelSelect()
-    {
-        if(!levelSelectIsShowing)
-        {
-            GameObject.Find("LevelSelector").GetComponent<UIParallelAnimation>().Play();
-        }
-        else
-        {
-            GameObject.Find("LevelSelector").GetComponent<UIFixedAnimation>().Play();
-        }
     }
 }
