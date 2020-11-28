@@ -93,6 +93,11 @@ public class InteractObjectiveController : MonoBehaviour
         }
     }
 
+    public int GetObjectivesOnHeadCount()
+    {
+        return allObjectivesOnHead.Count;
+    }
+
     public void RemoveObjectiveFromWorld(Transform objectiveToRemove)
     {
         for(int i = 0; i < allAvailableObjectivesInScene.Count; i++)
@@ -103,6 +108,21 @@ public class InteractObjectiveController : MonoBehaviour
                 Debug.Log(objectiveToRemove.name);
                 allAvailableObjectivesInScene.RemoveAt(i);
                 Destroy(objectiveToRemove.gameObject);
+                closestObjective = null;
+                closestObjectiveDistance = 999999f;
+                FindClosestObjective();
+                return;
+            }
+        }
+    }
+
+    public void DisableObjectInWorld(Transform objectiveToRemove)
+    {
+        for (int i = 0; i < allAvailableObjectivesInScene.Count; i++)
+        {
+            if (allAvailableObjectivesInScene[i] == objectiveToRemove)
+            {
+                allAvailableObjectivesInScene.RemoveAt(i);
                 closestObjective = null;
                 closestObjectiveDistance = 999999f;
                 FindClosestObjective();
