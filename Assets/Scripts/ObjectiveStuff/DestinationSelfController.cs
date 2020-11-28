@@ -19,7 +19,7 @@ public class DestinationSelfController : MonoBehaviour
         if (collision.tag != objectiveTag) return;
         if (isCompleted) return;
 
-        Debug.Log("Do the thing");
+        //Debug.Log("Do the thing");
         isCompleted = true;
         DestinationManager.Instance.SetDestinationCompleted(this.gameObject);
         GetComponent<HouseLightAnimator>().animate = true;

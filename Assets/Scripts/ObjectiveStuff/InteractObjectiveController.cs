@@ -266,11 +266,12 @@ public class InteractObjectiveController : MonoBehaviour
         {
             RaycastHit2D hit = Physics2D.Raycast(origin, sideToCheck[i], sideToCheck[i].magnitude, ~layerMaskToIgnoreForSideChecks);
             
-            if (hit.collider != null)
+            if (hit.collider != null && hit.collider.tag != "Destination")
             {
-                //Debug.Log(hit.collider.gameObject.name);
+                Debug.Log(hit.collider.gameObject.name);
                 sideBool = false;
             }
+            
 
             Debug.DrawLine(origin, origin + sideToCheck[i], (sideBool ? Color.green : Color.red));
         }

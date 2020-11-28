@@ -61,7 +61,7 @@ public class GameManager : MonoBehaviour
     public void UnlockNextLevel()
     {
         //if isnt last level
-        if((SceneController.Instance.currentLevelIndex + 1) > SceneController.Instance.LevelsInOrderAscending.Length)
+        if((SceneController.Instance.currentLevelIndex + 1) < SceneController.Instance.LevelsInOrderAscending.Length)
         {
             Debug.Log("unlock: " + SceneController.Instance.LevelsInOrderAscending[SceneController.Instance.currentLevelIndex + 1].ToString());
             PlayerPrefs.SetInt(SceneController.Instance.LevelsInOrderAscending[SceneController.Instance.currentLevelIndex + 1].ToString(), 1);

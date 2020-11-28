@@ -24,7 +24,7 @@ public class ObjectiveSelfController : MonoBehaviour
             if (timerDecaying < 0f)
             {
                 //old remove box
-                //GameObject.Find("TempPlayer").GetComponent<InteractObjectiveController>().RemoveObjectiveFromWorld(this.transform);
+                //GameObject.Find("Player").GetComponent<InteractObjectiveController>().RemoveObjectiveFromWorld(this.transform);
                 //new reset level
                 SceneController.Instance.ResetCurrentLevel();
             }
@@ -48,7 +48,7 @@ public class ObjectiveSelfController : MonoBehaviour
         isBeingDissabled = true;
         GetComponent<Rigidbody2D>().velocity = new Vector2(0f, -5f);
         GetComponent<SpriteRenderer>().sortingOrder = 2;
-        GameObject.FindGameObjectWithTag("Player").GetComponent<InteractObjectiveController>().DisableObjectInWorld(this.transform);
+        GameObject.Find("Player").GetComponent<InteractObjectiveController>().DisableObjectInWorld(this.transform);
         StartCoroutine(DisableTimer());
     }
 

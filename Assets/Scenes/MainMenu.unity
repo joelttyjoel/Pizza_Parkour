@@ -1467,7 +1467,7 @@ MonoBehaviour:
   randomDirection: 0
   disableAfter: 0
   playOnStart: 1
-  playOnEnable: 0
+  playOnEnable: 1
   playAudioOnPlay: 0
   duration: 1
   delay: 0
@@ -1931,7 +1931,7 @@ MonoBehaviour:
   randomDirection: 0
   disableAfter: 0
   playOnStart: 1
-  playOnEnable: 0
+  playOnEnable: 1
   playAudioOnPlay: 0
   duration: 0.5
   delay: 0
@@ -1990,8 +1990,8 @@ MonoBehaviour:
   isInLevel: 0
   mainMenu: {fileID: 102900000, guid: 5ce7efdb661c4d845bc7154ddd5aa1f0, type: 3}
   LevelsInOrderAscending:
-  - {fileID: 102900000, guid: f8c20f01799883646bc04f0b48ba443e, type: 3}
-  - {fileID: 102900000, guid: 685d22bf31f70c44b82950f075d9b6ce, type: 3}
+  - {fileID: 102900000, guid: a6ac7c0637d1f1c4b919245140ae6581, type: 3}
+  - {fileID: 102900000, guid: af6530d27aa010f47ac40a2df07ed82a, type: 3}
   currentLevelIndex: 0
 --- !u!114 &2077562796
 MonoBehaviour:
@@ -2311,7 +2311,7 @@ MonoBehaviour:
   randomDirection: 0
   disableAfter: 0
   playOnStart: 1
-  playOnEnable: 0
+  playOnEnable: 1
   playAudioOnPlay: 0
   duration: 1
   delay: 0

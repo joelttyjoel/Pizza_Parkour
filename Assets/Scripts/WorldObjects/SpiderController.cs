@@ -110,7 +110,7 @@ public class SpiderController : MonoBehaviour
     private void OnCollisionEnter2D(Collision2D collision)
     {
         //if hit package
-        GameObject.Find("TempPlayer").GetComponent<InteractObjectiveController>().DropTopObjective(false);
+        GameObject.Find("Player").GetComponent<InteractObjectiveController>().DropTopObjective(false);
     }
 
     private void OnDrawGizmos()
