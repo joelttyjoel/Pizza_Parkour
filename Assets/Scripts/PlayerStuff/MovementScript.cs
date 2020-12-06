@@ -8,21 +8,28 @@ public class MovementScript : MonoBehaviour
 {
     Collider2D col;
     Rigidbody2D rb;
+    Animator animCtrl;
+    SpriteRenderer sr;
     Vector2 groundedOrigin;
     Vector2 groundRayDir;
     Vector2 wallRayDir;
     Vector2 newPos;
 
+
+    enum animState { idle, running, jumping, falling };
+    animState currentAnim = animState.idle;
+    bool animHolding;
+
     bool grounded;
     bool isJumping;
     bool jumpBuffer;
-    bool facingRight;   //make sure to initilize to correct direction
+    bool facingLeft;   //make sure to initilize to correct direction
     bool hasAirJumped;
 
+    float groundRayOriginOffset;
     float lastVel;
 
     int lastIn;
-    
 
     #region timers
     float jAccelTimer;
@@ -111,8 +118,6 @@ public class MovementScript : MonoBehaviour
     [SerializeField,
         Tooltip("The minimum distance from the ground the collider bottom of the player needs to be to count as grounded.")]
     float groundedOffset = 0.1f;
-    [SerializeField]
-    float groundRayOriginOffset = 0f;
     [SerializeField,
         Tooltip("The minimum distance from the wall to walljump for example.")]
     float wallOffset = 0.1f;
@@ -120,10 +125,16 @@ public class MovementScript : MonoBehaviour
     float gratvityScale = 5f;
     [SerializeField]
     bool canDoubleJump = true;
-
-    public bool IsFacingRight()
+    [SerializeField, Min(0.01f), Tooltip("Minimum falling speed, used to determine when to switch to falling animation")]
+    float minFallingSpeed = 2.5f;
+    public bool IsFacingLeft()
     {
-        return facingRight;
+        return facingLeft;
+    }
+
+    public void SetHolding(bool v)
+    {
+        animHolding = v;
     }
 
     void Start()
@@ -138,10 +149,14 @@ public class MovementScript : MonoBehaviour
         groundRayDir = new Vector2(0, -groundedOffset);
         wallRayDir = new Vector2(wallOffset, 0);
 
+        animCtrl = GetComponent<Animator>();
+        sr = GetComponent<SpriteRenderer>();
+        lastIn = 1;     //initialize facingLeft to correct direction
+
+        groundRayOriginOffset = col.bounds.min.y;
         //init timers
         ResetCoyote();
 
-        //initialize facingRight to correct direction according to graphics
     }
 
     void Update()
@@ -181,7 +196,6 @@ public class MovementScript : MonoBehaviour
         else if (!j)
             isJumping = false;
 
-        Jumping();
 
         ///Horizontal movement (ground)
         //TODO: use a friction value when adding velocity and stopping:
@@ -193,7 +207,7 @@ public class MovementScript : MonoBehaviour
             if (lastIn != hInt)     //switched direction
             {
                 accelTimer = 0;
-                facingRight = !facingRight;
+                facingLeft = !facingLeft;
             }
 
             float currentAccel = GetAcceleration();
@@ -205,16 +219,69 @@ public class MovementScript : MonoBehaviour
                 rb.velocity = new Vector2(lastVel * hInt, rb.velocity.y);
             }
             lastVel = Mathf.Abs(rb.velocity.x);
+            lastIn = hInt;
+
+            //if (grounded)
+            currentAnim = animState.running;
         }
         else
         {
             accelTimer = 0;
             rb.velocity = new Vector2(0, rb.velocity.y);    //Player instantly stops when not moving horizontally.
                                                             //Need to stop the player using friction or something, cant affect velocity directly.
+            currentAnim = animState.idle;
         }
-        lastIn = hInt;
+
+
+        Jumping();
 
         SpeedClamp();
+
+        AnimationUpdate();
+    }
+
+    void AnimationUpdate()
+    {
+        sr.flipX = !facingLeft;
+
+        if (animCtrl != null)
+        {
+            if (animHolding)
+            {
+                animCtrl.SetBool("Holding", true);
+            }
+            else
+            {
+                animCtrl.SetBool("Holding", false);
+            }
+
+            switch (currentAnim)
+            {
+                case animState.idle:
+                    animCtrl.SetBool("Running", false);
+                    animCtrl.SetBool("Falling", false);
+                    animCtrl.SetBool("Jumping", false);
+                    break;
+                case animState.running:
+                    animCtrl.SetBool("Running", true);
+                    animCtrl.SetBool("Falling", false);
+                    animCtrl.SetBool("Jumping", false);
+                    break;
+                case animState.jumping:
+                    animCtrl.SetBool("Falling", false);
+                    animCtrl.SetBool("Jumping", true);
+                    break;
+                case animState.falling:
+                    animCtrl.SetBool("Jumping", false);
+                    animCtrl.SetBool("Falling", true);
+                    break;
+                default:
+                    Debug.LogError("anim state not defined", this);
+                    break;
+            }
+        }
+        else
+            Debug.LogWarning("Animation Controller not found on player.", this);
     }
 
     private void FixedUpdate()
@@ -302,22 +369,26 @@ public class MovementScript : MonoBehaviour
 
     bool IsPlayerGrounded()
     {
-        groundedOrigin = new Vector3(transform.position.x, transform.position.y + groundRayOriginOffset);
+        float bottomOfCollider = transform.position.y - col.bounds.extents.y + col.offset.y * 0.5f;
+        groundedOrigin = new Vector3(transform.position.x, bottomOfCollider);
         Vector2 boxSize = new Vector2(col.bounds.size.x - 0.01f, groundedOffset);
-        RaycastHit2D hit = Physics2D.BoxCast(new Vector3(transform.position.x, transform.position.y + groundRayOriginOffset), boxSize, 0, groundRayDir, groundedOffset);
+
+        LayerMask mask = LayerMask.GetMask(LayerMask.LayerToName(0));
+        if (GetComponent<InteractObjectiveController>() != null)     //temporary
+            mask = ~GetComponent<InteractObjectiveController>().layerMaskToIgnoreForSideChecks;
+
+        RaycastHit2D hit = Physics2D.BoxCast(groundedOrigin, boxSize, 0, groundRayDir, groundedOffset, mask);
 
         if (hit.collider != null)
         {
+            if (hit.collider == col)    
+            {
+                print(hit.point);
+                Debug.LogError("Grounded raycast hit player-collider, try changing groundRayOriginOffset.", this);
+            }
+            //if hit ground
             hasAirJumped = false;
             //ResetCoyote();
-            //if hit ground
-
-            if(hit.collider == col)
-            {
-                Debug.LogError("Grounded raycast hit player-collider, try changing groundRayOriginOffset.", this);
-
-            }
-
             return true;
         }
         return false;
@@ -330,7 +401,7 @@ public class MovementScript : MonoBehaviour
         RaycastHit2D hit = Physics2D.BoxCast(rayOrigin, boxSize, 0, wallRayDir, wallOffset);
 
         if (hit.collider != null)
-        {            
+        {
             if (Mathf.Round(Vector2.Dot(Vector2.left * dir, hit.normal)) == 1)  //check if wall
             {
                 return true;
@@ -351,7 +422,7 @@ public class MovementScript : MonoBehaviour
 
         //Debug grounded raycast
         Gizmos.color = Color.cyan;
-        Gizmos.DrawRay(new Vector3(transform.position.x, transform.position.y + groundRayOriginOffset), groundRayDir);
+        Gizmos.DrawRay(groundedOrigin, groundRayDir);
 
         if (Application.isPlaying)
         {
@@ -373,6 +444,8 @@ public class MovementScript : MonoBehaviour
 
         //v0 is jumpVelocity
 
+
+
         if (isJumping)
         {
             rb.velocity = Vector2.up * jumpVelocity;
@@ -386,6 +459,14 @@ public class MovementScript : MonoBehaviour
         else if (rb.velocity.y > 0 && !Input.GetButton("Jump"))  //upwards velocity & realeased jump-button (not max jump)
         {
             rb.velocity += Vector2.up * Physics2D.gravity.y * (shortJumpMultiplier - 1) * Time.deltaTime;
+        }
+
+        if (!grounded)
+        {
+            if (rb.velocity.y < -minFallingSpeed)
+                currentAnim = animState.falling;
+            else
+                currentAnim = animState.jumping;
         }
     }
 
