@@ -34,7 +34,7 @@ public class DecayingPlatformController : MonoBehaviour
 
     private IEnumerator DecayProcess()
     {
-        Debug.Log("Start decaying");
+        //Debug.Log("Start decaying");
         //if animation start here
         thisAnimation.enabled = true;
         //start timer

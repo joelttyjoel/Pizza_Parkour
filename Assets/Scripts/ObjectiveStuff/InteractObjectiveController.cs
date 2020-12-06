@@ -91,6 +91,11 @@ public class InteractObjectiveController : MonoBehaviour
         }
     }
 
+    public int GetObjectivesOnHeadCount()
+    {
+        return allObjectivesOnHead.Count;
+    }
+
     public void RemoveObjectiveFromWorld(Transform objectiveToRemove)
     {
         for(int i = 0; i < allAvailableObjectivesInScene.Count; i++)
@@ -101,6 +106,21 @@ public class InteractObjectiveController : MonoBehaviour
                 Debug.Log(objectiveToRemove.name);
                 allAvailableObjectivesInScene.RemoveAt(i);
                 Destroy(objectiveToRemove.gameObject);
+                closestObjective = null;
+                closestObjectiveDistance = 999999f;
+                FindClosestObjective();
+                return;
+            }
+        }
+    }
+
+    public void DisableObjectInWorld(Transform objectiveToRemove)
+    {
+        for (int i = 0; i < allAvailableObjectivesInScene.Count; i++)
+        {
+            if (allAvailableObjectivesInScene[i] == objectiveToRemove)
+            {
+                allAvailableObjectivesInScene.RemoveAt(i);
                 closestObjective = null;
                 closestObjectiveDistance = 999999f;
                 FindClosestObjective();
@@ -246,11 +266,12 @@ public class InteractObjectiveController : MonoBehaviour
         {
             RaycastHit2D hit = Physics2D.Raycast(origin, sideToCheck[i], sideToCheck[i].magnitude, ~layerMaskToIgnoreForSideChecks);
             
-            if (hit.collider != null)
+            if (hit.collider != null && hit.collider.tag != "Destination")
             {
-                //Debug.Log(hit.collider.gameObject.name);
+                Debug.Log(hit.collider.gameObject.name);
                 sideBool = false;
             }
+            
 
             Debug.DrawLine(origin, origin + sideToCheck[i], (sideBool ? Color.green : Color.red));
         }
