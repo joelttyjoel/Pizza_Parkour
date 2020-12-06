@@ -78,7 +78,14 @@ public class InteractObjectiveController : MonoBehaviour
         //CheckSide(raycastsRightCheck, canDropRight);
 
         //------EXTRA CHECKS BECAUE CAN
-        if (allObjectivesOnHead.Count <= 0) return;
+        if (allObjectivesOnHead.Count <= 0)
+        {
+            GetComponent<MovementScript>().SetHolding(false);
+            return;
+        }
+        else
+            GetComponent<MovementScript>().SetHolding(true);
+            
         //-----------------------------
 
         if (Input.GetKeyDown(KeyCode.E))
@@ -223,7 +230,7 @@ public class InteractObjectiveController : MonoBehaviour
 
         //find where to place, hardest part hmmm
         //right with fail on left
-        bool isGoingLeft = !GetComponent<MovementScript>().IsFacingRight();
+        bool isGoingLeft = GetComponent<MovementScript>().IsFacingLeft();
         if(isGoingLeft && canDropLeft)
         {
             objectToDrop.transform.position = leftDropPosition.position;
