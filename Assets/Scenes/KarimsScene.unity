@@ -3909,6 +3909,16 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
+    - target: {fileID: 5672116945107229521, guid: 2b45167bf523de247a655c4602aeb946,
+        type: 3}
+      propertyPath: shortAirJumpMultiplier
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 5672116945107229521, guid: 2b45167bf523de247a655c4602aeb946,
+        type: 3}
+      propertyPath: airJumpVelocity
+      value: 18
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2b45167bf523de247a655c4602aeb946, type: 3}
 --- !u!1001 &7669712064251686619

@@ -75,16 +75,19 @@ public class MovementScript : MonoBehaviour
 
     #region jumping
     [HideInInspector, SerializeField,
-        Tooltip("The amount of upwards-acceleration applied to the player each frame while jumping")]
+        Tooltip("The amount of upwards-acceleration applied to the player on jump-frame.")]
     float jumpVelocity = 20.5f;
+    [HideInInspector, SerializeField,
+        Tooltip("The amount of upwards-acceleration applied to the player on air-jump-frame.")]
+    float airJumpVelocity = 18f;
     [HideInInspector, SerializeField,
         Tooltip("Gravity multiplier for short-jump, determines how high a short-jump is."),
         Min(0f)]
-    float shortJumpMultiplier = 13; // early fall
+    float shortJumpMultiplier = 13f; // early fall
     [HideInInspector, SerializeField,
         Tooltip("NOT IN USE."),
         Min(0f)]
-    float shortAirJumpMultiplier = 1; // early fall (double jump)
+    float shortAirJumpMultiplier = 15f; // early fall (double jump)
     [HideInInspector, SerializeField,
         Tooltip("Gravity multiplier"),
         Min(0f)]
@@ -156,7 +159,6 @@ public class MovementScript : MonoBehaviour
         groundRayOriginOffset = col.bounds.min.y;
         //init timers
         ResetCoyote();
-
     }
 
     void Update()
@@ -196,7 +198,6 @@ public class MovementScript : MonoBehaviour
         else if (!j)
             isJumping = false;
 
-
         ///Horizontal movement (ground)
         //TODO: use a friction value when adding velocity and stopping:
         //Friction = 1 == normal snappy, full stop on same frame as release of key,
@@ -231,7 +232,6 @@ public class MovementScript : MonoBehaviour
                                                             //Need to stop the player using friction or something, cant affect velocity directly.
             currentAnim = animState.idle;
         }
-
 
         Jumping();
 
@@ -381,7 +381,7 @@ public class MovementScript : MonoBehaviour
 
         if (hit.collider != null)
         {
-            if (hit.collider == col)    
+            if (hit.collider == col)
             {
                 print(hit.point);
                 Debug.LogError("Grounded raycast hit player-collider, try changing groundRayOriginOffset.", this);
@@ -434,40 +434,43 @@ public class MovementScript : MonoBehaviour
 
     }
 #endif
-
     void Jumping()
     {
-        //Draw a jumpCurve directly using this formula? By setting height at time t directly. 
-        //This way we easily can set max jump height and have it affect velocity and time, and draw the curve, or change one of the other variables etc. 
-        //Vertical Jump Physics Equation:
-        //https://sciencing.com/calculate-jump-height-acceleration-8771263.html
-
-        //v0 is jumpVelocity
-
-
+        #region jumpCurve
+        /*
+        Draw a jumpCurve directly using this formula? By setting height at time t directly. 
+        This way we easily can set max jump height and have it affect velocity and time, and draw the curve, or change one of the other variables etc. 
+        Vertical Jump Physics Equation:
+        https://sciencing.com/calculate-jump-height-acceleration-8771263.html
+        v0 is jumpVelocity
+        */
+        #endregion
 
         if (isJumping)
         {
-            rb.velocity = Vector2.up * jumpVelocity;
             isJumping = false;
+            if (hasAirJumped)
+                rb.velocity = Vector2.up * airJumpVelocity;
+            else
+                rb.velocity = Vector2.up * jumpVelocity;
         }
 
-        if (rb.velocity.y < 0)   //falling
-        {
+        //falling
+        if (rb.velocity.y < 0)
             rb.velocity += Vector2.up * Physics2D.gravity.y * (fallMultiplier - 1) * Time.deltaTime;
-        }
-        else if (rb.velocity.y > 0 && !Input.GetButton("Jump"))  //upwards velocity & realeased jump-button (not max jump)
-        {
+
+        //air-jump & realeased jump-button (not max jump)
+        else if (rb.velocity.y > 0 && !Input.GetButton("Jump") && hasAirJumped)
+            rb.velocity += Vector2.up * Physics2D.gravity.y * (shortAirJumpMultiplier - 1) * Time.deltaTime;
+
+        //jumped & realeased jump-button (not max jump)
+        else if (rb.velocity.y > 0 && !Input.GetButton("Jump"))
             rb.velocity += Vector2.up * Physics2D.gravity.y * (shortJumpMultiplier - 1) * Time.deltaTime;
-        }
 
         if (!grounded)
-        {
             if (rb.velocity.y < -minFallingSpeed)
                 currentAnim = animState.falling;
             else
                 currentAnim = animState.jumping;
-        }
     }
-
 }
