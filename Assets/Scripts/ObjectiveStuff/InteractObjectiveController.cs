@@ -65,6 +65,7 @@ public class InteractObjectiveController : MonoBehaviour
         if (closestObjectiveDistance < pickupRange && PickUpHeadCheck())
         {
             pickUpHint.SetActive(true);
+            pickUpHint.GetComponent<Image>().sprite = closestObjective.GetComponent<SpriteRenderer>().sprite;
             if (Input.GetKeyDown(KeyCode.R)) PickUpClosestObjective();
         }
         else
@@ -174,7 +175,10 @@ public class InteractObjectiveController : MonoBehaviour
         contactFilter.SetLayerMask(~layerMaskToIgnoreForHeadChecks);
         int colliderCount = relevantBoxOnHead.OverlapCollider(contactFilter, colliders);
 
+        Debug.Log(colliderCount);
+
         if (colliderCount < 1) canPickUp = true;
+
         return canPickUp;
     }
 

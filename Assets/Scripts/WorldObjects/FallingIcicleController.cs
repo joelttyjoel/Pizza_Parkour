@@ -41,7 +41,7 @@ public class FallingIcicleController : MonoBehaviour
         isHit = false;
         for(int i = 0; i < hits.Length; i++)
         {
-            if (hits[i].transform.tag == "Player")
+            if (hits[i].transform.tag == "Player" && !hits[i].collider.isTrigger)
             {
                 isHit = true;
             }
