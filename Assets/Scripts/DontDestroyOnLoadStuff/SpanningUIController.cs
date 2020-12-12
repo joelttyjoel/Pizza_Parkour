@@ -83,7 +83,7 @@ public class SpanningUIController : MonoBehaviour
 
     public void ResetUI()
     {
-        GameObject.Find(levelSelector).transform.position = new Vector3(9999f, 99999f, 99999f);
+        //GameObject.Find(levelSelector).transform.position = new Vector3(9999f, 99999f, 99999f);
 
         GameObject.Find(winBackgroundToPreventClicks).GetComponent<Image>().enabled = false;
         levelSelectIsShowing = false;
