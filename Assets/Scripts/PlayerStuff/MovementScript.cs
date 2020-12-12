@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -16,11 +16,10 @@ public class MovementScript : MonoBehaviour
     Vector2 wallRayDir;
     Vector2 newPos;
 
-
     enum animState { idle, running, jumping, falling };
     animState currentAnim = animState.idle;
-    bool animHolding;
 
+    bool animHolding;
     bool grounded;
     bool isJumping;
     bool jumpBuffer;
@@ -118,6 +117,7 @@ public class MovementScript : MonoBehaviour
     float antiGravityApexMagnitude = -1; // anti gravity apex
     #endregion
 
+    #region General Movement
     [Header("General Movement")]
     [SerializeField,
         Tooltip("The minimum distance from the ground the collider bottom of the player needs to be to count as grounded.")]
@@ -131,6 +131,8 @@ public class MovementScript : MonoBehaviour
     bool canDoubleJump = true;
     [SerializeField, Min(0.01f), Tooltip("Minimum falling speed, used to determine when to switch to falling animation")]
     float minFallingSpeed = 2.5f;
+    #endregion
+
     public bool IsFacingLeft()
     {
         return facingLeft;
@@ -169,36 +171,21 @@ public class MovementScript : MonoBehaviour
         int hInt = Mathf.RoundToInt(Input.GetAxisRaw("Horizontal"));
         bool j = Input.GetButtonDown("Jump");                           //record j until jumpBuffer end
 
-        // jumpBuffer &= JumpBuffer(); //jumpBuffer = started buffer AND within buffer-time
+        JumpInput(j);
 
-        //bool withinCoyote = false;
-        //if (!grounded)
-        //    withinCoyote = Coyote();    //only count coyote-time while not grounded
+        Movement(hInt);
 
-        if (j/* || jumpBuffer*/)
-        {
-            grounded = IsPlayerGrounded();
-            if (grounded/* || withinCoyote*/)
-            {
-                isJumping = true;   //StartJump();
-            }
-            else    //Tried to jump while airbourne
-            {
-                if (!hasAirJumped && canDoubleJump)      //"Double jump"
-                {
-                    hasAirJumped = true;    //reset hasAirJumped when grounded again
-                    isJumping = true;
-                }
-                //    else if (!jumpBuffer)   //Jump-Buffering, cant be triggered by a buffered jump
-                //    {
-                //        jumpBuffer = true;
-                //    }
-                //    //StartJumpBuffer();  //Reset buffer-timer every ungrounded jump-input, whether already buffering or not.
-            }
-        }
-        else if (!j)
-            isJumping = false;
+        Jumping();
 
+        CatchHeight();
+
+        SpeedClamp();
+
+        AnimationUpdate();
+    }
+
+    private void Movement(int hInt)
+    {
         ///Horizontal movement (ground)
         //TODO: use a friction value when adding velocity and stopping:
         //Friction = 1 == normal snappy, full stop on same frame as release of key,
@@ -236,54 +223,52 @@ public class MovementScript : MonoBehaviour
         {
             rb.velocity = new Vector2(0, rb.velocity.y);
         }
+    }
 
-        #region Trashy visualisation of boxcast copy-pasted, remove later
-#if UNITY_EDITOR
+    private void JumpInput(bool j)
+    {
+        // jumpBuffer &= JumpBuffer(); //jumpBuffer = started buffer AND within buffer-time
 
-        //Setting up the points to draw the cast
-        Vector2 p1, p2, p3, p4, p5, p6, p7, p8, size = new Vector2(wallOffset * 2, col.bounds.size.y);
-        float w = size.x * 0.5f;
-        float h = size.y * 0.5f;
-        p1 = new Vector2(-w, h);
-        p2 = new Vector2(w, h);
-        p3 = new Vector2(w, -h);
-        p4 = new Vector2(-w, -h);
-        Quaternion q = Quaternion.AngleAxis(0, new Vector3(0, 0, 1));
-        p1 = q * p1;
-        p2 = q * p2;
-        p3 = q * p3;
-        p4 = q * p4;
-        p1 += wallRayOrigin;
-        p2 += wallRayOrigin;
-        p3 += wallRayOrigin;
-        p4 += wallRayOrigin;
-        Vector2 realDistance = wallRayDir.normalized * wallOffset;
-        p5 = p1 + realDistance;
-        p6 = p2 + realDistance;
-        p7 = p3 + realDistance;
-        p8 = p4 + realDistance;
-        //Drawing the cast
-        Color castColor = Color.red;//hit ? Color.red : Color.green;
-        Debug.DrawLine(p1, p2, castColor);
-        Debug.DrawLine(p2, p3, castColor);
-        Debug.DrawLine(p3, p4, castColor);
-        Debug.DrawLine(p4, p1, castColor);
-        Debug.DrawLine(p5, p6, castColor);
-        Debug.DrawLine(p6, p7, castColor);
-        Debug.DrawLine(p7, p8, castColor);
-        Debug.DrawLine(p8, p5, castColor);
-        Debug.DrawLine(p1, p5, Color.grey);
-        Debug.DrawLine(p2, p6, Color.grey);
-        Debug.DrawLine(p3, p7, Color.grey);
-        Debug.DrawLine(p4, p8, Color.grey);
-#endif
-        #endregion
+        //bool withinCoyote = false;
+        //if (!grounded)
+        //    withinCoyote = Coyote();    //only count coyote-time while not grounded
 
-        Jumping();
+        if (j/* || jumpBuffer*/)
+        {
+            grounded = IsPlayerGrounded();
+            if (grounded/* || withinCoyote*/)
+            {
+                isJumping = true;   //StartJump();
+            }
+            else    //Tried to jump while airbourne
+            {
+                if (!hasAirJumped && canDoubleJump)      //"Double jump"
+                {
+                    hasAirJumped = true;    //reset hasAirJumped when grounded again
+                    isJumping = true;
+                }
+                //    else if (!jumpBuffer)   //Jump-Buffering, cant be triggered by a buffered jump
+                //    {
+                //        jumpBuffer = true;
+                //    }
+                //    //StartJumpBuffer();  //Reset buffer-timer every ungrounded jump-input, whether already buffering or not.
+            }
+        }
+        else if (!j)
+            isJumping = false;
+    }
 
-        SpeedClamp();
-
-        AnimationUpdate();
+    /// <summary>
+    /// If the player barly misses the platform, hitting its legs to the side, it is helped up to reach the platform.
+    /// </summary>
+    void CatchHeight()
+    {
+        //if player isnt grounded and collided with a platform
+        //raycast from bottom of player collider, towards xdir of platform (ydir:0)
+        //get the platform-colliders top vertex
+        //distance = platformTopVertexCol.pos.y - bottomOfPlayerCol
+        //(distance should always be positive, others "top" vertex is beneath player)
+        //move player up by distance.
     }
 
     void AnimationUpdate()
@@ -452,6 +437,47 @@ public class MovementScript : MonoBehaviour
 
         RaycastHit2D hit = Physics2D.BoxCast(wallRayOrigin, boxSize, 0, wallRayDir, wallOffset, mask);
 
+        #region Trashy visualisation of boxcast for copy-pasted, remove later
+#if UNITY_EDITOR
+
+        //Setting up the points to draw the cast
+        Vector2 p1, p2, p3, p4, p5, p6, p7, p8, size = new Vector2(wallOffset * 2, col.bounds.size.y);
+        float w = size.x * 0.5f;
+        float h = size.y * 0.5f;
+        p1 = new Vector2(-w, h);
+        p2 = new Vector2(w, h);
+        p3 = new Vector2(w, -h);
+        p4 = new Vector2(-w, -h);
+        Quaternion q = Quaternion.AngleAxis(0, new Vector3(0, 0, 1));
+        p1 = q * p1;
+        p2 = q * p2;
+        p3 = q * p3;
+        p4 = q * p4;
+        p1 += wallRayOrigin;
+        p2 += wallRayOrigin;
+        p3 += wallRayOrigin;
+        p4 += wallRayOrigin;
+        Vector2 realDistance = wallRayDir.normalized * wallOffset;
+        p5 = p1 + realDistance;
+        p6 = p2 + realDistance;
+        p7 = p3 + realDistance;
+        p8 = p4 + realDistance;
+        //Drawing the cast
+        Color castColor = Color.red;//hit ? Color.red : Color.green;
+        Debug.DrawLine(p1, p2, castColor);
+        Debug.DrawLine(p2, p3, castColor);
+        Debug.DrawLine(p3, p4, castColor);
+        Debug.DrawLine(p4, p1, castColor);
+        Debug.DrawLine(p5, p6, castColor);
+        Debug.DrawLine(p6, p7, castColor);
+        Debug.DrawLine(p7, p8, castColor);
+        Debug.DrawLine(p8, p5, castColor);
+        Debug.DrawLine(p1, p5, Color.grey);
+        Debug.DrawLine(p2, p6, Color.grey);
+        Debug.DrawLine(p3, p7, Color.grey);
+        Debug.DrawLine(p4, p8, Color.grey);
+#endif
+        #endregion
 
         if (hit.collider != null)
         {
