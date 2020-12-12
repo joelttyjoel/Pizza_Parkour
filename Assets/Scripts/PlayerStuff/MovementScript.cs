@@ -12,6 +12,7 @@ public class MovementScript : MonoBehaviour
     SpriteRenderer sr;
     Vector2 groundedOrigin;
     Vector2 groundRayDir;
+    Vector2 wallRayOrigin;
     Vector2 wallRayDir;
     Vector2 newPos;
 
@@ -203,7 +204,7 @@ public class MovementScript : MonoBehaviour
         //Friction = 1 == normal snappy, full stop on same frame as release of key,
         //Friction = 0 == never stops and cant accelerate. 
 
-        if (hInt != 0 && !IsAtWall(hInt))
+        if (hInt != 0)
         {
             if (lastIn != hInt)     //switched direction
             {
@@ -216,12 +217,10 @@ public class MovementScript : MonoBehaviour
             rb.velocity += addedVelocity * hInt;
 
             if (lastIn == hInt && lastVel > Mathf.Abs(rb.velocity.x))    //didnt switch direction, but somehow decelerated (can happen when landing)
-            {
                 rb.velocity = new Vector2(lastVel * hInt, rb.velocity.y);
-            }
+
             lastVel = Mathf.Abs(rb.velocity.x);
             lastIn = hInt;
-
             //if (grounded)
             currentAnim = animState.running;
         }
@@ -232,6 +231,53 @@ public class MovementScript : MonoBehaviour
                                                             //Need to stop the player using friction or something, cant affect velocity directly.
             currentAnim = animState.idle;
         }
+
+        if (IsAtWall(hInt))      //Prevents player from getting stuck mid-air when moving towards a wall in-air
+        {
+            rb.velocity = new Vector2(0, rb.velocity.y);
+        }
+
+        #region Trashy visualisation of boxcast copy-pasted, remove later
+#if UNITY_EDITOR
+
+        //Setting up the points to draw the cast
+        Vector2 p1, p2, p3, p4, p5, p6, p7, p8, size = new Vector2(wallOffset * 2, col.bounds.size.y);
+        float w = size.x * 0.5f;
+        float h = size.y * 0.5f;
+        p1 = new Vector2(-w, h);
+        p2 = new Vector2(w, h);
+        p3 = new Vector2(w, -h);
+        p4 = new Vector2(-w, -h);
+        Quaternion q = Quaternion.AngleAxis(0, new Vector3(0, 0, 1));
+        p1 = q * p1;
+        p2 = q * p2;
+        p3 = q * p3;
+        p4 = q * p4;
+        p1 += wallRayOrigin;
+        p2 += wallRayOrigin;
+        p3 += wallRayOrigin;
+        p4 += wallRayOrigin;
+        Vector2 realDistance = wallRayDir.normalized * wallOffset;
+        p5 = p1 + realDistance;
+        p6 = p2 + realDistance;
+        p7 = p3 + realDistance;
+        p8 = p4 + realDistance;
+        //Drawing the cast
+        Color castColor = Color.red;//hit ? Color.red : Color.green;
+        Debug.DrawLine(p1, p2, castColor);
+        Debug.DrawLine(p2, p3, castColor);
+        Debug.DrawLine(p3, p4, castColor);
+        Debug.DrawLine(p4, p1, castColor);
+        Debug.DrawLine(p5, p6, castColor);
+        Debug.DrawLine(p6, p7, castColor);
+        Debug.DrawLine(p7, p8, castColor);
+        Debug.DrawLine(p8, p5, castColor);
+        Debug.DrawLine(p1, p5, Color.grey);
+        Debug.DrawLine(p2, p6, Color.grey);
+        Debug.DrawLine(p3, p7, Color.grey);
+        Debug.DrawLine(p4, p8, Color.grey);
+#endif
+        #endregion
 
         Jumping();
 
@@ -396,9 +442,16 @@ public class MovementScript : MonoBehaviour
 
     bool IsAtWall(int dir)
     {
-        Vector3 rayOrigin = transform.position + new Vector3(col.bounds.extents.x * dir, col.bounds.extents.y);
-        Vector2 boxSize = new Vector2(wallOffset, col.bounds.size.y);
-        RaycastHit2D hit = Physics2D.BoxCast(rayOrigin, boxSize, 0, wallRayDir, wallOffset);
+        float sideOfCollider = transform.position.x + dir * col.bounds.extents.x;
+        wallRayOrigin = new Vector3(sideOfCollider, transform.position.y + col.offset.y * 0.5f);
+        Vector2 boxSize = new Vector2(wallOffset * 2, col.bounds.size.y);
+
+        LayerMask mask = LayerMask.GetMask(LayerMask.LayerToName(0));
+        if (GetComponent<InteractObjectiveController>() != null)     //temporary
+            mask = ~GetComponent<InteractObjectiveController>().layerMaskToIgnoreForSideChecks;
+
+        RaycastHit2D hit = Physics2D.BoxCast(wallRayOrigin, boxSize, 0, wallRayDir, wallOffset, mask);
+
 
         if (hit.collider != null)
         {
@@ -423,15 +476,6 @@ public class MovementScript : MonoBehaviour
         //Debug grounded raycast
         Gizmos.color = Color.cyan;
         Gizmos.DrawRay(groundedOrigin, groundRayDir);
-
-        if (Application.isPlaying)
-        {
-            Vector3 rayOrigin = transform.position + new Vector3(col.bounds.extents.x, col.bounds.extents.y);
-            Debug.DrawRay(rayOrigin, wallRayDir, Color.blue);
-            rayOrigin = transform.position + new Vector3(col.bounds.extents.x * -1, col.bounds.extents.y);
-            Debug.DrawRay(rayOrigin, wallRayDir * -1, Color.blue);
-        }
-
     }
 #endif
     void Jumping()
