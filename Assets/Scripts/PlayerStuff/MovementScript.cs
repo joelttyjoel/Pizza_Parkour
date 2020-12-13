@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -12,14 +12,14 @@ public class MovementScript : MonoBehaviour
     SpriteRenderer sr;
     Vector2 groundedOrigin;
     Vector2 groundRayDir;
+    Vector2 wallRayOrigin;
     Vector2 wallRayDir;
     Vector2 newPos;
 
-
     enum animState { idle, running, jumping, falling };
     animState currentAnim = animState.idle;
-    bool animHolding;
 
+    bool animHolding;
     bool grounded;
     bool isJumping;
     bool jumpBuffer;
@@ -75,16 +75,19 @@ public class MovementScript : MonoBehaviour
 
     #region jumping
     [HideInInspector, SerializeField,
-        Tooltip("The amount of upwards-acceleration applied to the player each frame while jumping")]
+        Tooltip("The amount of upwards-acceleration applied to the player on jump-frame.")]
     float jumpVelocity = 20.5f;
+    [HideInInspector, SerializeField,
+        Tooltip("The amount of upwards-acceleration applied to the player on air-jump-frame.")]
+    float airJumpVelocity = 18f;
     [HideInInspector, SerializeField,
         Tooltip("Gravity multiplier for short-jump, determines how high a short-jump is."),
         Min(0f)]
-    float shortJumpMultiplier = 13; // early fall
+    float shortJumpMultiplier = 13f; // early fall
     [HideInInspector, SerializeField,
         Tooltip("NOT IN USE."),
         Min(0f)]
-    float shortAirJumpMultiplier = 1; // early fall (double jump)
+    float shortAirJumpMultiplier = 15f; // early fall (double jump)
     [HideInInspector, SerializeField,
         Tooltip("Gravity multiplier"),
         Min(0f)]
@@ -114,6 +117,7 @@ public class MovementScript : MonoBehaviour
     float antiGravityApexMagnitude = -1; // anti gravity apex
     #endregion
 
+    #region General Movement
     [Header("General Movement")]
     [SerializeField,
         Tooltip("The minimum distance from the ground the collider bottom of the player needs to be to count as grounded.")]
@@ -127,6 +131,8 @@ public class MovementScript : MonoBehaviour
     bool canDoubleJump = true;
     [SerializeField, Min(0.01f), Tooltip("Minimum falling speed, used to determine when to switch to falling animation")]
     float minFallingSpeed = 2.5f;
+    #endregion
+
     public bool IsFacingLeft()
     {
         return facingLeft;
@@ -156,7 +162,6 @@ public class MovementScript : MonoBehaviour
         groundRayOriginOffset = col.bounds.min.y;
         //init timers
         ResetCoyote();
-
     }
 
     void Update()
@@ -166,6 +171,62 @@ public class MovementScript : MonoBehaviour
         int hInt = Mathf.RoundToInt(Input.GetAxisRaw("Horizontal"));
         bool j = Input.GetButtonDown("Jump");                           //record j until jumpBuffer end
 
+        JumpInput(j);
+
+        Movement(hInt);
+
+        Jumping();
+
+        CatchHeight();
+
+        SpeedClamp();
+
+        AnimationUpdate();
+    }
+
+    private void Movement(int hInt)
+    {
+        ///Horizontal movement (ground)
+        //TODO: use a friction value when adding velocity and stopping:
+        //Friction = 1 == normal snappy, full stop on same frame as release of key,
+        //Friction = 0 == never stops and cant accelerate. 
+
+        if (hInt != 0)
+        {
+            if (lastIn != hInt)     //switched direction
+            {
+                accelTimer = 0;
+                facingLeft = !facingLeft;
+            }
+
+            float currentAccel = GetAcceleration();
+            Vector2 addedVelocity = new Vector2(maxSpeed * currentAccel * Time.deltaTime, 0);
+            rb.velocity += addedVelocity * hInt;
+
+            if (lastIn == hInt && lastVel > Mathf.Abs(rb.velocity.x))    //didnt switch direction, but somehow decelerated (can happen when landing)
+                rb.velocity = new Vector2(lastVel * hInt, rb.velocity.y);
+
+            lastVel = Mathf.Abs(rb.velocity.x);
+            lastIn = hInt;
+            //if (grounded)
+            currentAnim = animState.running;
+        }
+        else
+        {
+            accelTimer = 0;
+            rb.velocity = new Vector2(0, rb.velocity.y);    //Player instantly stops when not moving horizontally.
+                                                            //Need to stop the player using friction or something, cant affect velocity directly.
+            currentAnim = animState.idle;
+        }
+
+        if (IsAtWall(hInt))      //Prevents player from getting stuck mid-air when moving towards a wall in-air
+        {
+            rb.velocity = new Vector2(0, rb.velocity.y);
+        }
+    }
+
+    private void JumpInput(bool j)
+    {
         // jumpBuffer &= JumpBuffer(); //jumpBuffer = started buffer AND within buffer-time
 
         //bool withinCoyote = false;
@@ -195,49 +256,19 @@ public class MovementScript : MonoBehaviour
         }
         else if (!j)
             isJumping = false;
+    }
 
-
-        ///Horizontal movement (ground)
-        //TODO: use a friction value when adding velocity and stopping:
-        //Friction = 1 == normal snappy, full stop on same frame as release of key,
-        //Friction = 0 == never stops and cant accelerate. 
-
-        if (hInt != 0 && !IsAtWall(hInt))
-        {
-            if (lastIn != hInt)     //switched direction
-            {
-                accelTimer = 0;
-                facingLeft = !facingLeft;
-            }
-
-            float currentAccel = GetAcceleration();
-            Vector2 addedVelocity = new Vector2(maxSpeed * currentAccel * Time.deltaTime, 0);
-            rb.velocity += addedVelocity * hInt;
-
-            if (lastIn == hInt && lastVel > Mathf.Abs(rb.velocity.x))    //didnt switch direction, but somehow decelerated (can happen when landing)
-            {
-                rb.velocity = new Vector2(lastVel * hInt, rb.velocity.y);
-            }
-            lastVel = Mathf.Abs(rb.velocity.x);
-            lastIn = hInt;
-
-            //if (grounded)
-            currentAnim = animState.running;
-        }
-        else
-        {
-            accelTimer = 0;
-            rb.velocity = new Vector2(0, rb.velocity.y);    //Player instantly stops when not moving horizontally.
-                                                            //Need to stop the player using friction or something, cant affect velocity directly.
-            currentAnim = animState.idle;
-        }
-
-
-        Jumping();
-
-        SpeedClamp();
-
-        AnimationUpdate();
+    /// <summary>
+    /// If the player barly misses the platform, hitting its legs to the side, it is helped up to reach the platform.
+    /// </summary>
+    void CatchHeight()
+    {
+        //if player isnt grounded and collided with a platform
+        //raycast from bottom of player collider, towards xdir of platform (ydir:0)
+        //get the platform-colliders top vertex
+        //distance = platformTopVertexCol.pos.y - bottomOfPlayerCol
+        //(distance should always be positive, others "top" vertex is beneath player)
+        //move player up by distance.
     }
 
     void AnimationUpdate()
@@ -381,7 +412,7 @@ public class MovementScript : MonoBehaviour
 
         if (hit.collider != null)
         {
-            if (hit.collider == col)    
+            if (hit.collider == col)
             {
                 print(hit.point);
                 Debug.LogError("Grounded raycast hit player-collider, try changing groundRayOriginOffset.", this);
@@ -396,9 +427,57 @@ public class MovementScript : MonoBehaviour
 
     bool IsAtWall(int dir)
     {
-        Vector3 rayOrigin = transform.position + new Vector3(col.bounds.extents.x * dir, col.bounds.extents.y);
-        Vector2 boxSize = new Vector2(wallOffset, col.bounds.size.y);
-        RaycastHit2D hit = Physics2D.BoxCast(rayOrigin, boxSize, 0, wallRayDir, wallOffset);
+        float sideOfCollider = transform.position.x + dir * col.bounds.extents.x;
+        wallRayOrigin = new Vector3(sideOfCollider, transform.position.y + col.offset.y * 0.5f);
+        Vector2 boxSize = new Vector2(wallOffset * 2, col.bounds.size.y);
+
+        LayerMask mask = LayerMask.GetMask(LayerMask.LayerToName(0));
+        if (GetComponent<InteractObjectiveController>() != null)     //temporary
+            mask = ~GetComponent<InteractObjectiveController>().layerMaskToIgnoreForSideChecks;
+
+        RaycastHit2D hit = Physics2D.BoxCast(wallRayOrigin, boxSize, 0, wallRayDir, wallOffset, mask);
+
+        #region Trashy visualisation of boxcast for copy-pasted, remove later
+#if UNITY_EDITOR
+
+        //Setting up the points to draw the cast
+        Vector2 p1, p2, p3, p4, p5, p6, p7, p8, size = new Vector2(wallOffset * 2, col.bounds.size.y);
+        float w = size.x * 0.5f;
+        float h = size.y * 0.5f;
+        p1 = new Vector2(-w, h);
+        p2 = new Vector2(w, h);
+        p3 = new Vector2(w, -h);
+        p4 = new Vector2(-w, -h);
+        Quaternion q = Quaternion.AngleAxis(0, new Vector3(0, 0, 1));
+        p1 = q * p1;
+        p2 = q * p2;
+        p3 = q * p3;
+        p4 = q * p4;
+        p1 += wallRayOrigin;
+        p2 += wallRayOrigin;
+        p3 += wallRayOrigin;
+        p4 += wallRayOrigin;
+        Vector2 realDistance = wallRayDir.normalized * wallOffset;
+        p5 = p1 + realDistance;
+        p6 = p2 + realDistance;
+        p7 = p3 + realDistance;
+        p8 = p4 + realDistance;
+        //Drawing the cast
+        Color castColor = Color.red;//hit ? Color.red : Color.green;
+        Debug.DrawLine(p1, p2, castColor);
+        Debug.DrawLine(p2, p3, castColor);
+        Debug.DrawLine(p3, p4, castColor);
+        Debug.DrawLine(p4, p1, castColor);
+        Debug.DrawLine(p5, p6, castColor);
+        Debug.DrawLine(p6, p7, castColor);
+        Debug.DrawLine(p7, p8, castColor);
+        Debug.DrawLine(p8, p5, castColor);
+        Debug.DrawLine(p1, p5, Color.grey);
+        Debug.DrawLine(p2, p6, Color.grey);
+        Debug.DrawLine(p3, p7, Color.grey);
+        Debug.DrawLine(p4, p8, Color.grey);
+#endif
+        #endregion
 
         if (hit.collider != null)
         {
@@ -423,51 +502,45 @@ public class MovementScript : MonoBehaviour
         //Debug grounded raycast
         Gizmos.color = Color.cyan;
         Gizmos.DrawRay(groundedOrigin, groundRayDir);
-
-        if (Application.isPlaying)
-        {
-            Vector3 rayOrigin = transform.position + new Vector3(col.bounds.extents.x, col.bounds.extents.y);
-            Debug.DrawRay(rayOrigin, wallRayDir, Color.blue);
-            rayOrigin = transform.position + new Vector3(col.bounds.extents.x * -1, col.bounds.extents.y);
-            Debug.DrawRay(rayOrigin, wallRayDir * -1, Color.blue);
-        }
-
     }
 #endif
-
     void Jumping()
     {
-        //Draw a jumpCurve directly using this formula? By setting height at time t directly. 
-        //This way we easily can set max jump height and have it affect velocity and time, and draw the curve, or change one of the other variables etc. 
-        //Vertical Jump Physics Equation:
-        //https://sciencing.com/calculate-jump-height-acceleration-8771263.html
-
-        //v0 is jumpVelocity
-
-
+        #region jumpCurve
+        /*
+        Draw a jumpCurve directly using this formula? By setting height at time t directly. 
+        This way we easily can set max jump height and have it affect velocity and time, and draw the curve, or change one of the other variables etc. 
+        Vertical Jump Physics Equation:
+        https://sciencing.com/calculate-jump-height-acceleration-8771263.html
+        v0 is jumpVelocity
+        */
+        #endregion
 
         if (isJumping)
         {
-            rb.velocity = Vector2.up * jumpVelocity;
             isJumping = false;
+            if (hasAirJumped)
+                rb.velocity = Vector2.up * airJumpVelocity;
+            else
+                rb.velocity = Vector2.up * jumpVelocity;
         }
 
-        if (rb.velocity.y < 0)   //falling
-        {
+        //falling
+        if (rb.velocity.y < 0)
             rb.velocity += Vector2.up * Physics2D.gravity.y * (fallMultiplier - 1) * Time.deltaTime;
-        }
-        else if (rb.velocity.y > 0 && !Input.GetButton("Jump"))  //upwards velocity & realeased jump-button (not max jump)
-        {
+
+        //air-jump & realeased jump-button (not max jump)
+        else if (rb.velocity.y > 0 && !Input.GetButton("Jump") && hasAirJumped)
+            rb.velocity += Vector2.up * Physics2D.gravity.y * (shortAirJumpMultiplier - 1) * Time.deltaTime;
+
+        //jumped & realeased jump-button (not max jump)
+        else if (rb.velocity.y > 0 && !Input.GetButton("Jump"))
             rb.velocity += Vector2.up * Physics2D.gravity.y * (shortJumpMultiplier - 1) * Time.deltaTime;
-        }
 
         if (!grounded)
-        {
             if (rb.velocity.y < -minFallingSpeed)
                 currentAnim = animState.falling;
             else
                 currentAnim = animState.jumping;
-        }
     }
-
 }

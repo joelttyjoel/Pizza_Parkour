@@ -175,7 +175,7 @@ public class InteractObjectiveController : MonoBehaviour
         contactFilter.SetLayerMask(~layerMaskToIgnoreForHeadChecks);
         int colliderCount = relevantBoxOnHead.OverlapCollider(contactFilter, colliders);
 
-        Debug.Log(colliderCount);
+        //Debug.Log(colliderCount);
 
         if (colliderCount < 1) canPickUp = true;
 

@@ -127,8 +127,9 @@ MonoBehaviour:
   catchHeight: -1
   bumpedHeadWidth: -1
   jumpVelocity: 20.5
+  airJumpVelocity: 18
   shortJumpMultiplier: 13
-  shortAirJumpMultiplier: 1
+  shortAirJumpMultiplier: 15
   fallMultiplier: 11.3
   coyoteTime: -1
   jumpBufferTime: -1
