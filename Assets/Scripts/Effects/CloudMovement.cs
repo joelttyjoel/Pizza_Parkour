@@ -12,23 +12,23 @@ public class CloudMovement : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        transform.position = new Vector3(startXPosition.x, transform.position.y, transform.position.x);
+        transform.position = new Vector3(startXPosition.x, transform.position.y, transform.position.z);
 
-        transform.position = new Vector3(transform.position.x + headStartInSeconds * speed, transform.position.y, transform.position.x);
+        transform.position = new Vector3(transform.position.x + headStartInSeconds * speed, transform.position.y, transform.position.z);
     }
 
     // Update is called once per frame
     void Update()
     {
-        transform.position = new Vector3(transform.position.x + Time.deltaTime * speed, transform.position.y, transform.position.x);
+        transform.position = new Vector3(transform.position.x + Time.deltaTime * speed, transform.position.y, transform.position.z);
 
         if(speed > 0f)
         {
-            if (transform.position.x > endXPosition.x) transform.position = new Vector3(startXPosition.x, transform.position.y, transform.position.x);
+            if (transform.position.x > endXPosition.x) transform.position = new Vector3(startXPosition.x, transform.position.y, transform.position.z);
         }
         else if(speed < 0f)
         {
-            if (transform.position.x < endXPosition.x) transform.position = new Vector3(startXPosition.x, transform.position.y, transform.position.x);
+            if (transform.position.x < endXPosition.x) transform.position = new Vector3(startXPosition.x, transform.position.y, transform.position.z);
         }
     }
 
