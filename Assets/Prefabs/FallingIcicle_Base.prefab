@@ -102,8 +102,8 @@ BoxCollider2D:
   m_Offset: {x: 0, y: 0.27}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 5.06, y: 3.37}
+    pivot: {x: 0.5, y: 0.3}
+    oldSize: {x: 1.1244445, y: 0.7488889}
     newSize: {x: 1, y: 1}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
@@ -175,7 +175,7 @@ GameObject:
   - component: {fileID: 5267610222723255058}
   - component: {fileID: 5267610222723255059}
   m_Layer: 0
-  m_Name: FallingIcicle
+  m_Name: FallingIcicle_Base
   m_TagString: World
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -189,7 +189,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5267610222723255057}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 5.55, y: 5.63, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 5267610222088963639}
