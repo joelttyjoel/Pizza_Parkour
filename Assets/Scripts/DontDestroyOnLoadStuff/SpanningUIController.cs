@@ -69,13 +69,13 @@ public class SpanningUIController : MonoBehaviour
                 if(!GameManager.Instance.GetUnlockedStateByIndex(i)) allButtonsInOrderAscending[i].GetComponent<UIFixedAnimation>().Pause();
             }
 
-            GameObject.Find(levelSelector).GetComponent<UIParallelAnimation>().Play();
+            GameObject.Find(levelSelector).transform.localPosition = new Vector3(0, 0, 0);
             GameObject.Find(winBackgroundToPreventClicks).GetComponent<Image>().enabled = true;
         }
         else
         {
+            GameObject.Find(levelSelector).transform.localPosition = new Vector3(-2000, 0, 0);
             GameObject.Find(winBackgroundToPreventClicks).GetComponent<Image>().enabled = false;
-            GameObject.Find(levelSelector).GetComponent<UIFixedAnimation>().Play();
         }
 
         levelSelectIsShowing = !levelSelectIsShowing;
@@ -83,7 +83,7 @@ public class SpanningUIController : MonoBehaviour
 
     public void ResetUI()
     {
-        GameObject.Find(levelSelector).transform.position = new Vector3(9999f, 99999f, 99999f);
+        //GameObject.Find(levelSelector).transform.position = new Vector3(9999f, 99999f, 99999f);
 
         GameObject.Find(winBackgroundToPreventClicks).GetComponent<Image>().enabled = false;
         levelSelectIsShowing = false;
