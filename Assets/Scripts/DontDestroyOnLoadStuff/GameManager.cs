@@ -41,6 +41,8 @@ public class GameManager : MonoBehaviour
 
             ResetMemory();
         }
+
+        SpanningUIController.Instance.SetSettingsToSaved(PlayerPrefs.GetFloat("MusicVolume"), PlayerPrefs.GetFloat("SoundVolume"));
     }
 
     private void ResetMemory()
@@ -56,6 +58,9 @@ public class GameManager : MonoBehaviour
             //set all to shit scores
             PlayerPrefs.SetFloat(SceneController.Instance.LevelsInOrderAscending[i].ToString() + "_HighScore", 0f);
         }
+
+        PlayerPrefs.SetFloat("MusicVolume", 0f);
+        PlayerPrefs.SetFloat("SoundVolume", 0f);
     }
 
     public void UnlockNextLevel()

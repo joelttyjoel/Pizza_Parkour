@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class DestinationSelfController : MonoBehaviour
 {
+    public List<AudioClip> audioClips;
     public string objectiveTag;
 
     private SpriteRenderer thisSR;
@@ -18,6 +19,11 @@ public class DestinationSelfController : MonoBehaviour
     {
         if (collision.tag != objectiveTag) return;
         if (isCompleted) return;
+
+        //set random audio clip for when done
+        int random = Random.Range(0, audioClips.Count);
+        GetComponent<AudioSource>().clip = audioClips[random];
+        GetComponent<AudioSource>().Play();
 
         //Debug.Log("Do the thing");
         isCompleted = true;

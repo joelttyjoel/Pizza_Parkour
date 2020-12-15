@@ -401,7 +401,7 @@ MonoBehaviour:
   m_PhysicalUnit: 3
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
-  m_DynamicPixelsPerUnit: 25
+  m_DynamicPixelsPerUnit: 10
 --- !u!114 &5877159484532368284
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -743,7 +743,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &5877159484789361752
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1960,9 +1960,12 @@ MonoBehaviour:
     m_Bits: 768
   leftDropPosition: {fileID: 5877159484169466777}
   rightDropPosition: {fileID: 5877159485595609281}
+  layerMaskToOnlyHitForSideChecks:
+    serializedVersion: 2
+    m_Bits: 4352
   layerMaskToIgnoreForSideChecks:
     serializedVersion: 2
-    m_Bits: 1024
+    m_Bits: 1536
   centerRaycastsOffset: {x: 0, y: -0.15, z: 0}
   raycastsLeftCheck:
   - {x: -1.18, y: 0, z: 0}

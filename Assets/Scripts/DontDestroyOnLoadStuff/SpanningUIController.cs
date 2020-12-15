@@ -15,9 +15,15 @@ public class SpanningUIController : MonoBehaviour
     public string highscoreText;
     [Header("Level selector stuff")]
     public string levelSelector;
+    [Header("Settings")]
+    public string settingsName;
+    public string sliderMusicName;
+    public string sliderSoundName;
     
     [System.NonSerialized]
     public bool levelSelectIsShowing = false;
+    [System.NonSerialized]
+    public bool settingsIsShowing = false;
 
     //singleton
     public static SpanningUIController Instance;
@@ -81,11 +87,37 @@ public class SpanningUIController : MonoBehaviour
         levelSelectIsShowing = !levelSelectIsShowing;
     }
 
+    public void ToggleSettingsMenu()
+    {
+        if (!settingsIsShowing)
+        {
+            GameObject.Find(settingsName).transform.localPosition = new Vector3(0, 0, 0);
+            GameObject.Find(winBackgroundToPreventClicks).GetComponent<Image>().enabled = true;
+        }
+        else
+        {
+            GameObject.Find(settingsName).transform.localPosition = new Vector3(-2000, 0, 0);
+            GameObject.Find(winBackgroundToPreventClicks).GetComponent<Image>().enabled = false;
+        }
+
+        settingsIsShowing = !settingsIsShowing;
+    }
+
     public void ResetUI()
     {
-        //GameObject.Find(levelSelector).transform.position = new Vector3(9999f, 99999f, 99999f);
-
-        GameObject.Find(winBackgroundToPreventClicks).GetComponent<Image>().enabled = false;
+        settingsIsShowing = false;
         levelSelectIsShowing = false;
+    }
+
+    public void UpdateSettingsValues()
+    {
+        GameObject.Find(sliderMusicName).GetComponent<SliderStuff>().UpdateValues();
+        GameObject.Find(sliderSoundName).GetComponent<SliderStuff>().UpdateValues();
+    }
+
+    public void SetSettingsToSaved(float volumeMusic, float volumeSound)
+    {
+        GameObject.Find(sliderMusicName).GetComponent<SliderStuff>().SetValues(volumeMusic);
+        GameObject.Find(sliderSoundName).GetComponent<SliderStuff>().SetValues(volumeSound);
     }
 }

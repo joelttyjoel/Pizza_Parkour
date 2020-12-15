@@ -1,17 +1,17 @@
 fileFormatVersion: 2
-guid: 6f1912a6374be354fbe36d7f1fe627b1
+guid: d4511076fe6479849b754f23d409663b
 TrueTypeFontImporter:
   externalObjects: {}
   serializedVersion: 4
   fontSize: 100
-  forceTextureCase: -2
+  forceTextureCase: -1
   characterSpacing: 0
   characterPadding: 1
   includeFontData: 1
   fontNames:
   - Gochi Hand
   fallbackFontReferences:
-  - {fileID: 12800000, guid: d4511076fe6479849b754f23d409663b, type: 3}
+  - {fileID: 12800000, guid: 6f1912a6374be354fbe36d7f1fe627b1, type: 3}
   customCharacters: 
   fontRenderingMode: 0
   ascentCalculationMode: 1

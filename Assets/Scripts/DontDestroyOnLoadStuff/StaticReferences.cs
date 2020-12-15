@@ -29,8 +29,23 @@ public class StaticReferences : MonoBehaviour
         SpanningUIController.Instance.ToggleLevelSelect();
     }
 
+    public void SpanningUIController_ToggleSettingsMenu()
+    {
+        SpanningUIController.Instance.ToggleSettingsMenu();
+    }
+
     public void SpanningUIController_ShowWinScreen()
     {
         SpanningUIController.Instance.ShowWinScreen();
+    }
+
+    public void SpanningUIController_UpdateSettingsValues()
+    {
+        SpanningUIController.Instance.UpdateSettingsValues();
+    }
+
+    public void UpdateVolumeMusic(float value)
+    {
+
     }
 }
