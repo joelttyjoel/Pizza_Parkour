@@ -14,7 +14,7 @@ public class ButtonStuff : MonoBehaviour
     public bool selectOnMouseover;
     public bool selectOnEnable;
     public bool hasAnimation;
-    public bool isOnLevelselect;
+    public bool isAboveMainMenu;
 
     [Header("Fill if needed")]
     public GameObject objectToSelect;
@@ -75,11 +75,11 @@ public class ButtonStuff : MonoBehaviour
     {
         if(selectOnMouseover)
         {
-            if(isOnLevelselect)
+            if(isAboveMainMenu)
             {
                 EventSystem.current.SetSelectedGameObject(this.gameObject);
             }
-            else if(!SpanningUIController.Instance.levelSelectIsShowing)
+            else if(!SpanningUIController.Instance.levelSelectIsShowing && !SpanningUIController.Instance.settingsIsShowing)
             {
                 EventSystem.current.SetSelectedGameObject(this.gameObject);
             }

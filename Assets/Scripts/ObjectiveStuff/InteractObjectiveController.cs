@@ -19,6 +19,7 @@ public class InteractObjectiveController : MonoBehaviour
     [Header("Drop stuff")]
     public Transform leftDropPosition;
     public Transform rightDropPosition;
+    public LayerMask layerMaskToOnlyHitForSideChecks;
     public LayerMask layerMaskToIgnoreForSideChecks;
     public Vector3 centerRaycastsOffset;
     public Vector3[] raycastsLeftCheck;
@@ -294,11 +295,11 @@ public class InteractObjectiveController : MonoBehaviour
         sideBool = true;
         for (int i = 0; i < sideToCheck.Length; i++)
         {
-            RaycastHit2D hit = Physics2D.Raycast(origin, sideToCheck[i], sideToCheck[i].magnitude, ~layerMaskToIgnoreForSideChecks);
+            RaycastHit2D hit = Physics2D.Raycast(origin, sideToCheck[i], sideToCheck[i].magnitude, layerMaskToOnlyHitForSideChecks);
 
-            if (hit.collider != null && hit.collider.tag != "Destination")
+            if (hit.collider != null)
             {
-                Debug.Log(hit.collider.gameObject.name);
+                //Debug.Log(hit.collider.gameObject.name);
                 sideBool = false;
             }
 

@@ -285,7 +285,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   textTimer: {fileID: 6442498402588958819}
-  timeForDisable: 0.5
+  Rosett: {fileID: 6442498401303911837}
+  timeForDisable: 0.3
   timeForDecay: 11
   isDecaying: 0
 --- !u!1 &6442498402588958817

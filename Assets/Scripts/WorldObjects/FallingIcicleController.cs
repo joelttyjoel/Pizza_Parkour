@@ -5,6 +5,8 @@ using PathCreation.Examples;
 
 public class FallingIcicleController : MonoBehaviour
 {
+    public AudioClip fallingSoundLoop;
+    public AudioClip damagePlayer;
     public float timeBeforeFall;
     public float timeBeforeRespawn;
     public float distanceCheckForPlayer;
@@ -17,7 +19,9 @@ public class FallingIcicleController : MonoBehaviour
     private bool isFalling = false;
     private bool canDamage = false;
     private bool isHit;
+    private bool hasBeenHit = false;
     private float timeBeingHit;
+    private AudioSource thisAudioSource;
     
     // Start is called before the first frame update
     void Start()
@@ -27,6 +31,7 @@ public class FallingIcicleController : MonoBehaviour
         startPosition = transform.position;
         isFalling = false;
         thisPath = GetComponent<PathFollower>();
+        thisAudioSource = GetComponent<AudioSource>();
 
         thisPath.enabled = false;
     }
@@ -51,9 +56,17 @@ public class FallingIcicleController : MonoBehaviour
         {
             timeBeingHit -= Time.deltaTime;
             thisPath.enabled = true;
+            if(!hasBeenHit)
+            {
+                hasBeenHit = true;
+                thisAudioSource.clip = fallingSoundLoop;
+                thisAudioSource.Play();
+            }
         }
         else
         {
+            hasBeenHit = false;
+            thisAudioSource.Stop();
             timeBeingHit = timeBeforeFall;
             thisPath.enabled = false;
             transform.position = startPosition;
@@ -61,6 +74,8 @@ public class FallingIcicleController : MonoBehaviour
 
         if(timeBeingHit < 0f)
         {
+            hasBeenHit = false;
+            thisAudioSource.Stop();
             isFalling = true;
             canDamage = true;
             thisRB.simulated = true;
@@ -93,6 +108,8 @@ public class FallingIcicleController : MonoBehaviour
             Debug.Log("Damage Player");
             //for now drop box because fanni
             GameObject.Find("Player").GetComponent<InteractObjectiveController>().DropTopObjective(false);
+            thisAudioSource.PlayOneShot(damagePlayer);
+            canDamage = false;
         }
     }
 
