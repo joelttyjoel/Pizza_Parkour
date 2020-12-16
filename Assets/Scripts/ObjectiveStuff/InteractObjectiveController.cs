@@ -32,11 +32,13 @@ public class InteractObjectiveController : MonoBehaviour
     private bool canDropLeft = false;
     private bool canDropRight = false;
 
+    PlayerSounds playerSounds;
 
     private Stack<Transform> allObjectivesOnHead = new Stack<Transform>();
 
     void Start()
     {
+
         GameObject[] allObjectives = GameObject.FindGameObjectsWithTag(objectiveTag);
 
         for (int i = 0; i < allObjectives.Length; i++)
@@ -47,13 +49,17 @@ public class InteractObjectiveController : MonoBehaviour
         objectiveContainer = GameObject.Find("ObjectiveContainer").transform;
 
         //put all objectives on head
-        while(allAvailableObjectivesInScene.Count > 0)
+        while (allAvailableObjectivesInScene.Count > 0)
         {
             FindClosestObjective();
             PickUpClosestObjective();
         }
+
+        playerSounds = GetComponent<PlayerSounds>();    //Keep this order, makes sure to not play pickup-sound when all are autopicked up..
+        if (playerSounds == null)
+            Debug.LogWarning("No PlayerSounds script attached to player object, no player-sounds will play.", this);
     }
-    
+
     void Update()
     {
         UpdateFakeColliderOnHead();
@@ -86,7 +92,7 @@ public class InteractObjectiveController : MonoBehaviour
         }
         else
             GetComponent<MovementScript>().SetHolding(true);
-            
+
         //-----------------------------
 
         if (Input.GetKeyDown(KeyCode.E))
@@ -106,7 +112,7 @@ public class InteractObjectiveController : MonoBehaviour
 
     public void RemoveObjectiveFromWorld(Transform objectiveToRemove)
     {
-        for(int i = 0; i < allAvailableObjectivesInScene.Count; i++)
+        for (int i = 0; i < allAvailableObjectivesInScene.Count; i++)
         {
             if (allAvailableObjectivesInScene[i] == objectiveToRemove)
             {
@@ -148,13 +154,13 @@ public class InteractObjectiveController : MonoBehaviour
 
     private void FindClosestObjective()
     {
-        if(allAvailableObjectivesInScene.Count == 0)
+        if (allAvailableObjectivesInScene.Count == 0)
         {
             closestObjective = null;
             closestObjectiveDistance = 999999f;
             return;
         }
-        
+
         foreach (Transform a in allAvailableObjectivesInScene)
         {
             float currentDistance = Vector3.Distance(transform.position, a.position);
@@ -205,6 +211,8 @@ public class InteractObjectiveController : MonoBehaviour
         closestObjective.position = firstBoxPosition.position + (objectiveOffset * allObjectivesOnHead.Count);
         //add to stack on head
         allObjectivesOnHead.Push(closestObjective);
+
+        playerSounds?.PlayPickup();
     }
 
     public void DropTopObjective(bool shouldThrow)
@@ -235,34 +243,45 @@ public class InteractObjectiveController : MonoBehaviour
         //find where to place, hardest part hmmm
         //right with fail on left
         bool isGoingLeft = GetComponent<MovementScript>().IsFacingLeft();
-        if(isGoingLeft && canDropLeft)
+        if (isGoingLeft && canDropLeft)
         {
             objectToDrop.transform.position = leftDropPosition.position;
             //apply force in direction of drop
             if (shouldThrow) objectToDrop.GetComponent<Rigidbody2D>().AddForce(Vector2.left * powerThrow);
         }
-        else if(canDropRight)
-        {
-            objectToDrop.transform.position = rightDropPosition.position;
-            if (shouldThrow) objectToDrop.GetComponent<Rigidbody2D>().AddForce(Vector2.right * powerThrow);
-        }
+        //else if (canDropRight)
+        //{
+        //    objectToDrop.transform.position = rightDropPosition.position;
+        //    if (shouldThrow)
+        //    {
+        //        objectToDrop.GetComponent<Rigidbody2D>().AddForce(Vector2.right * powerThrow);
+        //        playerSounds?.PlayThrow();
+        //    }
+        //}
         //left with fail on right
-        if (!isGoingLeft && canDropRight)
+        else if (!isGoingLeft && canDropRight)
         {
             objectToDrop.transform.position = rightDropPosition.position;
             if (shouldThrow) objectToDrop.GetComponent<Rigidbody2D>().AddForce(Vector2.right * powerThrow);
+
         }
-        else if (canDropLeft)
-        {
-            objectToDrop.transform.position = leftDropPosition.position;
-            if (shouldThrow) objectToDrop.GetComponent<Rigidbody2D>().AddForce(Vector2.left * powerThrow);
-        }
+        //else if (canDropLeft)
+        //{
+        //    objectToDrop.transform.position = leftDropPosition.position;
+        //    if (shouldThrow)
+        //    {
+        //        objectToDrop.GetComponent<Rigidbody2D>().AddForce(Vector2.left * powerThrow);
+        //        playerSounds?.PlayThrow();
+        //    }
+        //}
         //else, just stays on head
+
+        playerSounds?.PlayThrow();   //null conditional operator '?.': if playerSounds != null, PlayJump(). Probably remove before deploy/release. 
     }
 
     private void UpdateFakeColliderOnHead()
     {
-        for(int i = 0; i < allFakeColliders.Length; i++)
+        for (int i = 0; i < allFakeColliders.Length; i++)
         {
             if (i < allObjectivesOnHead.Count) allFakeColliders[i].SetActive(true);
             else allFakeColliders[i].SetActive(false);
@@ -273,16 +292,16 @@ public class InteractObjectiveController : MonoBehaviour
     {
         Vector3 origin = transform.position + centerRaycastsOffset;
         sideBool = true;
-        for(int i = 0; i < sideToCheck.Length; i++)
+        for (int i = 0; i < sideToCheck.Length; i++)
         {
             RaycastHit2D hit = Physics2D.Raycast(origin, sideToCheck[i], sideToCheck[i].magnitude, ~layerMaskToIgnoreForSideChecks);
-            
+
             if (hit.collider != null && hit.collider.tag != "Destination")
             {
                 Debug.Log(hit.collider.gameObject.name);
                 sideBool = false;
             }
-            
+
 
             Debug.DrawLine(origin, origin + sideToCheck[i], (sideBool ? Color.green : Color.red));
         }

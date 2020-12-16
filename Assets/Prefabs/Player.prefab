@@ -1771,6 +1771,8 @@ GameObject:
   - component: {fileID: 5877159483993433556}
   - component: {fileID: 4038732320654546666}
   - component: {fileID: 4038732320654546667}
+  - component: {fileID: 5941106253099850540}
+  - component: {fileID: 1591633213915713571}
   m_Layer: 10
   m_Name: Player
   m_TagString: Player
@@ -2042,6 +2044,141 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!82 &5941106253099850540
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5877159485870812236}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 24300002, guid: ba19f51629d7a154cb8cda021c05d8b6,
+    type: 2}
+  m_audioClip: {fileID: 8300000, guid: 520cda3caa2328648b654588ec242f25, type: 3}
+  m_PlayOnAwake: 0
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+--- !u!114 &1591633213915713571
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5877159485870812236}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f1c9c46ecbf7a6a49846bf52ae64ada5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  footstepVol: 0.478
+  jumpVol: 0.393
+  throwVol: 0.522
+  pickupVol: 0.169
+  groundFootsteps:
+  - groundType: Snow
+    footstepsOnGroundType:
+    - {fileID: 8300000, guid: 5de40df504c724341bb87e9a77caa3d4, type: 3}
+    - {fileID: 8300000, guid: 19baaf0e20dfb7d4aa1c9ea1367028c3, type: 3}
+    - {fileID: 8300000, guid: 9842da969da732d4d8e1dd634284b0f2, type: 3}
+  - groundType: Ice
+    footstepsOnGroundType:
+    - {fileID: 8300000, guid: 05509c7f82012be429840902e2c50ddf, type: 3}
+    - {fileID: 8300000, guid: 301c689de7f46a3449da3bd79eb8d4cf, type: 3}
+    - {fileID: 8300000, guid: cf9cba26b5b41144792d76f5dc1fd68c, type: 3}
+  jumpSounds:
+  - {fileID: 8300000, guid: 96e4cbe7df2aaa64ea011eaf04bd2a11, type: 3}
+  - {fileID: 8300000, guid: 5c44ab7259381f141a941150e1ed8871, type: 3}
+  - {fileID: 8300000, guid: 697513a1c7f9b1748a793f0067302261, type: 3}
+  - {fileID: 8300000, guid: 520cda3caa2328648b654588ec242f25, type: 3}
+  throwSounds:
+  - {fileID: 8300000, guid: e3ff006e1c8949b47b920b82c7559883, type: 3}
+  - {fileID: 8300000, guid: 6f529daa711f8db47a2798a876a7a37b, type: 3}
+  - {fileID: 8300000, guid: 43c554ab83235db4db0d9e02452c80fc, type: 3}
+  pickupSounds:
+  - {fileID: 8300000, guid: 2dbe9f7f420754e48b9512f10199dd23, type: 3}
 --- !u!1 &6304428968216099788
 GameObject:
   m_ObjectHideFlags: 0
