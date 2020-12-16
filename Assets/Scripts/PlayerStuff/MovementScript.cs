@@ -1,11 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 [RequireComponent(typeof(Collider2D))]
 [RequireComponent(typeof(Rigidbody2D))]
 public class MovementScript : MonoBehaviour
 {
+    PlayerSounds playerSounds;
+
     Collider2D col;
     Rigidbody2D rb;
     Animator animCtrl;
@@ -18,6 +21,8 @@ public class MovementScript : MonoBehaviour
 
     enum animState { idle, running, jumping, falling };
     animState currentAnim = animState.idle;
+    string[] groundTypes = new string[] { "Snow", "Ice" };
+    string currentGroundType; //= groundType.Snow;
 
     bool animHolding;
     bool grounded;
@@ -162,6 +167,12 @@ public class MovementScript : MonoBehaviour
         groundRayOriginOffset = col.bounds.min.y;
         //init timers
         ResetCoyote();
+
+        currentGroundType = groundTypes[0];
+
+        playerSounds = GetComponent<PlayerSounds>();
+        if (playerSounds == null)
+            Debug.LogWarning("No PlayerSounds script attached to player object, no player-sounds will play.", this);
     }
 
     void Update()
@@ -190,6 +201,16 @@ public class MovementScript : MonoBehaviour
         //TODO: use a friction value when adding velocity and stopping:
         //Friction = 1 == normal snappy, full stop on same frame as release of key,
         //Friction = 0 == never stops and cant accelerate. 
+        /*
+         * switch(currentGroundType)
+         *      case "Ice": 
+         *          slippery, smal friction number
+         *              break;
+         *      default:
+         *          normal friction = maxFriction (1?);
+         *      break;
+         */
+
 
         if (hInt != 0)
         {
@@ -406,7 +427,7 @@ public class MovementScript : MonoBehaviour
 
         LayerMask mask = LayerMask.GetMask(LayerMask.LayerToName(0));
         if (GetComponent<InteractObjectiveController>() != null)     //temporary
-            mask = ~GetComponent<InteractObjectiveController>().layerMaskToIgnoreForSideChecks;
+            mask = ~GetComponent<InteractObjectiveController>().layerMaskToIgnoreForSideChecks; //temp
 
         RaycastHit2D hit = Physics2D.BoxCast(groundedOrigin, boxSize, 0, groundRayDir, groundedOffset, mask);
 
@@ -414,13 +435,23 @@ public class MovementScript : MonoBehaviour
         {
             if (hit.collider == col)
             {
-                print(hit.point);
                 Debug.LogError("Grounded raycast hit player-collider, try changing groundRayOriginOffset.", this);
             }
-            //if hit ground
-            hasAirJumped = false;
-            //ResetCoyote();
-            return true;
+            else
+            {
+                TilemapCollider2D tmCol;
+                hit.collider.TryGetComponent(out tmCol);
+                if (tmCol != null)   //if hit ground tilemap
+                {
+                    currentGroundType = GetGroundTileType(hit.point, tmCol.GetComponent<Tilemap>());
+                }
+                else
+                    currentGroundType = groundTypes[0]; //default to snow
+
+                hasAirJumped = false;
+                //ResetCoyote();
+                return true;
+            }
         }
         return false;
     }
@@ -523,6 +554,8 @@ public class MovementScript : MonoBehaviour
                 rb.velocity = Vector2.up * airJumpVelocity;
             else
                 rb.velocity = Vector2.up * jumpVelocity;
+
+            playerSounds?.PlayJump();   //null conditional operator '?.': if playerSounds != null, PlayJump(). Probably remove before deploy/release. 
         }
 
         //falling
@@ -542,5 +575,46 @@ public class MovementScript : MonoBehaviour
                 currentAnim = animState.falling;
             else
                 currentAnim = animState.jumping;
+    }
+
+    string GetGroundTileType(Vector3 position, Tilemap tm)
+    {
+        string tName = "";
+        Vector3Int tilePos = tm.WorldToCell(new Vector3(transform.position.x, position.y - 0.5f));
+        var tile = tm?.GetTile(tilePos);
+
+        if (tile == null)   //try offsetting boxcast.hit.point insted of using player position if no tile found
+        {
+            int offsetSide = transform.position.x - position.x > 0 ? -1 : 1;
+            tilePos = tm.WorldToCell(new Vector3(position.x + 0.5f * offsetSide, position.y - 0.5f));    //offset to get the middle of the tile, otherwise sometimes the tile above or adjacent the intended might be returned
+            tile = tm?.GetTile(tilePos);
+        }
+
+        tName = tile.name;
+        for (int i = 0; i < groundTypes.Length; i++)
+        {
+            if (tName.Contains(groundTypes[i]))     //Kind of expensive, would be nice if we could set groundType in tileData directly.. which is kind of possible but may be overkill.
+            {
+                return groundTypes[i];
+                break;
+            }
+            if (i == groundTypes.Length - 1)
+            {
+                Debug.LogWarning("Tile does not contain name of any known groundTypes, defaulting to 'snow'.", this);
+            }
+        }
+        return groundTypes[0];  //shoudlnt be reached.
+    }
+
+    public void PlayFootstepSound()
+    {
+        for(int i = 0; i < groundTypes.Length; i++)
+        {
+            if (currentGroundType == groundTypes[i])
+                playerSounds.PlayFootstepOnGroundType(groundTypes[i]);
+
+            if (i == groundTypes.Length)
+                Debug.LogError("GroundType was never found, make spellcheck and make sure all ground types are added to groundTypes array.", this);
+        }
     }
 }
