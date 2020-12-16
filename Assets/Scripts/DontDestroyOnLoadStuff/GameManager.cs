@@ -5,6 +5,7 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
     [Header("God, controls and keeps track of stuff")]
+    public bool gameManagerStartsOnFirstScene = true;
     public bool resetPlayerPrefsOnStart = false;
     public bool showWinScreen = false;
 
@@ -42,7 +43,7 @@ public class GameManager : MonoBehaviour
             ResetMemory();
         }
 
-        SpanningUIController.Instance.SetSettingsToSaved(PlayerPrefs.GetFloat("MusicVolume"), PlayerPrefs.GetFloat("SoundVolume"));
+        if(gameManagerStartsOnFirstScene) SpanningUIController.Instance.SetSettingsToSaved(PlayerPrefs.GetFloat("MusicVolume"), PlayerPrefs.GetFloat("SoundVolume"));
     }
 
     private void ResetMemory()

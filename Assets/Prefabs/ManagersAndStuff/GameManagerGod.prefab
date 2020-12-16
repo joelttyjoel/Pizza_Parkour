@@ -51,6 +51,7 @@ MonoBehaviour:
   LevelsInOrderAscending:
   - {fileID: 102900000, guid: fc917af2bc16fd442bd8155d09733665, type: 3}
   - {fileID: 102900000, guid: af6530d27aa010f47ac40a2df07ed82a, type: 3}
+  - {fileID: 102900000, guid: ba82bf67669242c44b8773d48c2c11c8, type: 3}
   currentLevelIndex: 0
 --- !u!114 &1002698268390939059
 MonoBehaviour:
@@ -70,6 +71,9 @@ MonoBehaviour:
   scoreText: ScoreText
   highscoreText: HighscoreText
   levelSelector: LevelSelector
+  settingsName: SettingsMenu
+  sliderMusicName: MusicVolumeSlider
+  sliderSoundName: SoundVolumeSlider
 --- !u!114 &1002698268390939058
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -93,8 +97,9 @@ AudioSource:
   m_GameObject: {fileID: 1002698268390939062}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 0}
+  OutputAudioMixerGroup: {fileID: 24300002, guid: 281203ec86a14e546a12b3a99673ef62,
+    type: 2}
+  m_audioClip: {fileID: 8300000, guid: faf5fc20dbc1d97479ac6b49d3b70ce6, type: 3}
   m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1

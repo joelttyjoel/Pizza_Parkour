@@ -1967,7 +1967,7 @@ MonoBehaviour:
     m_Bits: 4352
   layerMaskToIgnoreForSideChecks:
     serializedVersion: 2
-    m_Bits: 1536
+    m_Bits: 1792
   centerRaycastsOffset: {x: 0, y: -0.15, z: 0}
   raycastsLeftCheck:
   - {x: -1.18, y: 0, z: 0}
