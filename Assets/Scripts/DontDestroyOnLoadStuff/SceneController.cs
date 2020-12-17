@@ -32,6 +32,8 @@ public class SceneController : MonoBehaviour
         currentLevelIndex++;
         SceneManager.LoadScene(LevelsInOrderAscending[currentLevelIndex].name.ToString());
 
+        SpanningUIController.Instance.OnLevelStart();
+
         isInLevel = true;
     }
 
@@ -41,6 +43,8 @@ public class SceneController : MonoBehaviour
 
         currentLevelIndex = index;
         SceneManager.LoadScene(LevelsInOrderAscending[index].name.ToString());
+
+        SpanningUIController.Instance.OnLevelStart();
 
         isInLevel = true;
     }

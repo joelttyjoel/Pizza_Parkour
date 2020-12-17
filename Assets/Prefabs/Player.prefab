@@ -1846,7 +1846,7 @@ MonoBehaviour:
   bumpedHeadWidth: -1
   groundMaskThingsToAvoidTemp:
     serializedVersion: 2
-    m_Bits: 9783
+    m_Bits: 1591
   onWallMaskThingsToAvoid:
     serializedVersion: 2
     m_Bits: 1847
