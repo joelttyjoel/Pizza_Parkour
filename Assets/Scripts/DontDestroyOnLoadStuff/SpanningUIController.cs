@@ -50,6 +50,20 @@ public class SpanningUIController : MonoBehaviour
 
     public void ShowWinScreen()
     {
+        //yes but have to to avoid enabled menu clicking stuff
+        GameObject[] allObjects = Resources.FindObjectsOfTypeAll<GameObject>();
+        foreach (GameObject a in allObjects)
+        {
+            if (a.name == winImage)
+            {
+                a.SetActive(true);
+            }
+            else if(a.name == winMenu)
+            {
+                a.SetActive(true);
+            }
+        }
+
         //update score from clock
         GameObject.Find(scoreText).GetComponent<Text>().text = "Level Score: " + LevelClockController.Instance.currentTimeClock.ToString("F2");
         GameObject.Find(highscoreText).GetComponent<Text>().text = "Level Highscore: " + PlayerPrefs.GetFloat(SceneController.Instance.LevelsInOrderAscending[SceneController.Instance.currentLevelIndex].ToString() + "_HighScore").ToString("F2");
@@ -60,6 +74,19 @@ public class SpanningUIController : MonoBehaviour
         GameObject.Find(winMenu).GetComponent<UIFixedAnimation>().Play();
 
         //doesent need to be reset because only outcome is change scene
+    }
+
+    public void OnLevelStart()
+    {
+        StartCoroutine(OnLevelStartWaitForStart());
+    }
+
+    private IEnumerator OnLevelStartWaitForStart()
+    {
+        yield return new WaitForEndOfFrame();
+        yield return new WaitForEndOfFrame();
+        GameObject.Find(winImage).SetActive(false);
+        GameObject.Find(winMenu).SetActive(false);
     }
 
     public void ToggleLevelSelect()
