@@ -1844,6 +1844,12 @@ MonoBehaviour:
   maxFallSpeed: 25
   catchHeight: -1
   bumpedHeadWidth: -1
+  groundMaskThingsToAvoidTemp:
+    serializedVersion: 2
+    m_Bits: 9783
+  onWallMaskThingsToAvoid:
+    serializedVersion: 2
+    m_Bits: 1847
   jumpVelocity: 20.5
   airJumpVelocity: 18
   shortJumpMultiplier: 13

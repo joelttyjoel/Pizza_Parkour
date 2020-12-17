@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7669712064080599046}
   - component: {fileID: 7669712064080599045}
-  m_Layer: 9
+  m_Layer: 12
   m_Name: AnimationWhenDecaying
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -95,7 +95,7 @@ GameObject:
   - component: {fileID: 7669712064566247388}
   - component: {fileID: 7669712064566247378}
   - component: {fileID: 7669712064566247379}
-  m_Layer: 9
+  m_Layer: 12
   m_Name: SpritePlatform
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -200,7 +200,7 @@ GameObject:
   - component: {fileID: 2457305809240654420}
   - component: {fileID: 7669712064833753792}
   - component: {fileID: 1815505724389397874}
-  m_Layer: 9
+  m_Layer: 12
   m_Name: DecayingPlatform_Base
   m_TagString: World
   m_Icon: {fileID: 0}

@@ -77,7 +77,9 @@ public class MovementScript : MonoBehaviour
         Tooltip("NOT IN USE. By how much width can the player be off the collider-side on above platforms while jumping, and still be helped past it.")]
     float bumpedHeadWidth = -1; //bumped head correction, could be percentage of player-width
     #endregion
-
+    //sorry but just need this in quick for working, make so that its "what to hit" not "what to avoid", is better
+    public LayerMask groundMaskThingsToAvoidTemp;
+    public LayerMask onWallMaskThingsToAvoid;
     #region jumping
     [HideInInspector, SerializeField,
         Tooltip("The amount of upwards-acceleration applied to the player on jump-frame.")]
@@ -427,7 +429,7 @@ public class MovementScript : MonoBehaviour
 
         LayerMask mask = LayerMask.GetMask(LayerMask.LayerToName(0));
         if (GetComponent<InteractObjectiveController>() != null)     //temporary
-            mask = ~GetComponent<InteractObjectiveController>().layerMaskToIgnoreForSideChecks;
+            mask = ~groundMaskThingsToAvoidTemp;
 
         RaycastHit2D hit = Physics2D.BoxCast(groundedOrigin, boxSize, 0, groundRayDir, groundedOffset, mask);
 
@@ -464,7 +466,7 @@ public class MovementScript : MonoBehaviour
 
         LayerMask mask = LayerMask.GetMask(LayerMask.LayerToName(0));
         if (GetComponent<InteractObjectiveController>() != null)     //temporary
-            mask = ~GetComponent<InteractObjectiveController>().layerMaskToIgnoreForSideChecks;
+            mask = ~onWallMaskThingsToAvoid;
 
         RaycastHit2D hit = Physics2D.BoxCast(wallRayOrigin, boxSize, 0, wallRayDir, wallOffset, mask);
 
