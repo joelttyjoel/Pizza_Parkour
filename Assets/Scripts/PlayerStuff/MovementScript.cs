@@ -512,6 +512,7 @@ public class MovementScript : MonoBehaviour
 
         if (hit.collider != null)
         {
+            Debug.Log(hit.collider.name);
             if (Mathf.Round(Vector2.Dot(Vector2.left * dir, hit.normal)) == 1)  //check if wall
             {
                 return true;

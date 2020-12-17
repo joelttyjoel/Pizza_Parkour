@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7669712064080599046}
   - component: {fileID: 7669712064080599045}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: AnimationWhenDecaying
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -95,7 +95,7 @@ GameObject:
   - component: {fileID: 7669712064566247388}
   - component: {fileID: 7669712064566247378}
   - component: {fileID: 7669712064566247379}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: SpritePlatform
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -196,11 +196,11 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7669712064833753795}
-  - component: {fileID: 7669712064833753794}
+  - component: {fileID: -5179771715515345728}
   - component: {fileID: 2457305809240654420}
   - component: {fileID: 7669712064833753792}
   - component: {fileID: 1815505724389397874}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: DecayingPlatform_Base
   m_TagString: World
   m_Icon: {fileID: 0}
@@ -228,8 +228,8 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 1, y: 1}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!61 &7669712064833753794
-BoxCollider2D:
+--- !u!68 &-5179771715515345728
+EdgeCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -237,23 +237,19 @@ BoxCollider2D:
   m_GameObject: {fileID: 7669712064833753804}
   m_Enabled: 1
   m_Density: 1
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: 572fd18c7e0aec34d8cb651cdd827b04, type: 2}
   m_IsTrigger: 0
   m_UsedByEffector: 1
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0.28}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 1, y: 1}
-    newSize: {x: 1, y: 1}
-    adaptiveTilingThreshold: 0.5
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
-  serializedVersion: 2
-  m_Size: {x: 1, y: 0.43}
+  m_Offset: {x: 0, y: 0.5}
   m_EdgeRadius: 0
+  m_Points:
+  - {x: -0.5, y: 0}
+  - {x: 0.5, y: 0}
+  m_AdjacentStartPoint: {x: 0, y: 0}
+  m_AdjacentEndPoint: {x: 0, y: 0}
+  m_UseAdjacentStartPoint: 0
+  m_UseAdjacentEndPoint: 0
 --- !u!251 &2457305809240654420
 PlatformEffector2D:
   m_ObjectHideFlags: 0
@@ -269,7 +265,7 @@ PlatformEffector2D:
   m_RotationalOffset: 0
   m_UseOneWay: 1
   m_UseOneWayGrouping: 0
-  m_SurfaceArc: 160
+  m_SurfaceArc: 250
   m_UseSideFriction: 0
   m_UseSideBounce: 0
   m_SideArc: 0

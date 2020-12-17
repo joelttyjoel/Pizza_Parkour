@@ -11,14 +11,14 @@ public class DecayingPlatformController : MonoBehaviour
 
     private bool isDecayed = false;
     private SpriteRenderer thisSR;
-    private BoxCollider2D thisC;
+    private EdgeCollider2D thisC;
     private PathFollower thisAnimation;
     private AudioSource thisAudioSource;
 
     private void Start()
     {
         thisSR = GetComponentInChildren<SpriteRenderer>();
-        thisC = GetComponent<BoxCollider2D>();
+        thisC = GetComponent<EdgeCollider2D>();
         thisAnimation = GetComponentInChildren<PathFollower>();
         thisAudioSource = GetComponent<AudioSource>();
 

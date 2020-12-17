@@ -24,6 +24,11 @@ public class StaticReferences : MonoBehaviour
         SceneController.Instance.ExitGame();
     }
 
+    public void SceneController_ResetCurrentLevel()
+    {
+        SceneController.Instance.ResetCurrentLevel();
+    }
+
     public void SpanningUIController_ToggleLevelSelect()
     {
         SpanningUIController.Instance.ToggleLevelSelect();

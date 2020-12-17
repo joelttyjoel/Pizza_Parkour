@@ -38340,37 +38340,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 1002698268390939058, guid: 84202c0bd2ec5294ebc7df1734dd3624,
-        type: 3}
-      propertyPath: resetPlayerPrefsOnStart
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1002698268390939059, guid: 84202c0bd2ec5294ebc7df1734dd3624,
-        type: 3}
-      propertyPath: settingsName
-      value: SettingsMenu
-      objectReference: {fileID: 0}
-    - target: {fileID: 1002698268390939059, guid: 84202c0bd2ec5294ebc7df1734dd3624,
-        type: 3}
-      propertyPath: sliderMusicName
-      value: MusicVolumeSlider
-      objectReference: {fileID: 0}
-    - target: {fileID: 1002698268390939059, guid: 84202c0bd2ec5294ebc7df1734dd3624,
-        type: 3}
-      propertyPath: sliderSoundName
-      value: SoundVolumeSlider
-      objectReference: {fileID: 0}
-    - target: {fileID: 1002698268390939060, guid: 84202c0bd2ec5294ebc7df1734dd3624,
-        type: 3}
-      propertyPath: LevelsInOrderAscending.Array.size
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 1002698268390939060, guid: 84202c0bd2ec5294ebc7df1734dd3624,
-        type: 3}
-      propertyPath: LevelsInOrderAscending.Array.data[2]
-      value: 
-      objectReference: {fileID: 102900000, guid: ba82bf67669242c44b8773d48c2c11c8,
-        type: 3}
     - target: {fileID: 1002698268390939061, guid: 84202c0bd2ec5294ebc7df1734dd3624,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -38431,16 +38400,5 @@ PrefabInstance:
       propertyPath: m_Name
       value: GameManagerGod
       objectReference: {fileID: 0}
-    - target: {fileID: 1936632764382547719, guid: 84202c0bd2ec5294ebc7df1734dd3624,
-        type: 3}
-      propertyPath: m_audioClip
-      value: 
-      objectReference: {fileID: 8300000, guid: faf5fc20dbc1d97479ac6b49d3b70ce6, type: 3}
-    - target: {fileID: 1936632764382547719, guid: 84202c0bd2ec5294ebc7df1734dd3624,
-        type: 3}
-      propertyPath: OutputAudioMixerGroup
-      value: 
-      objectReference: {fileID: 24300002, guid: 281203ec86a14e546a12b3a99673ef62,
-        type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 84202c0bd2ec5294ebc7df1734dd3624, type: 3}
