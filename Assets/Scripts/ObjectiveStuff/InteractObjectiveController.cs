@@ -73,7 +73,7 @@ public class InteractObjectiveController : MonoBehaviour
         {
             pickUpHint.SetActive(true);
             pickUpHint.GetComponent<Image>().sprite = closestObjective.GetComponent<SpriteRenderer>().sprite;
-            if (Input.GetKeyDown(KeyCode.R)) PickUpClosestObjective();
+            if (Input.GetButtonDown("Pickup")) PickUpClosestObjective();
         }
         else
         {
@@ -95,12 +95,13 @@ public class InteractObjectiveController : MonoBehaviour
             GetComponent<MovementScript>().SetHolding(true);
 
         //-----------------------------
-
-        if (Input.GetKeyDown(KeyCode.E))
+        //drop
+        if (Input.GetButtonDown("Fire1"))
         {
             DropTopObjective(false);
         }
-        if (Input.GetKeyDown(KeyCode.F))
+        //throw
+        if (Input.GetButtonDown("Fire2"))
         {
             DropTopObjective(true);
         }
