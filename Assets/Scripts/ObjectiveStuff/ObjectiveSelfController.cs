@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class ObjectiveSelfController : MonoBehaviour
 {
     public Text textTimer;
+    public GameObject Rosett;
     public float timeForDisable = 0.5f;
     public float timeForDecay = 10f;
     public bool isDecaying = false;
@@ -47,7 +48,8 @@ public class ObjectiveSelfController : MonoBehaviour
     {
         isBeingDissabled = true;
         GetComponent<Rigidbody2D>().velocity = new Vector2(0f, -5f);
-        GetComponent<SpriteRenderer>().sortingOrder = 2;
+        GetComponent<SpriteRenderer>().sortingOrder = 3;
+        Rosett.GetComponent<SpriteRenderer>().sortingOrder = 2;
         GameObject.Find("Player").GetComponent<InteractObjectiveController>().DisableObjectInWorld(this.transform);
         StartCoroutine(DisableTimer());
     }

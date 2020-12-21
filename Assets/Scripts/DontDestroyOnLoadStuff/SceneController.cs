@@ -6,8 +6,8 @@ using UnityEngine.SceneManagement;
 public class SceneController : MonoBehaviour
 {
     public bool isInLevel = false;
-    public Object mainMenu;
-    public Object[] LevelsInOrderAscending;
+    public string mainMenuNamn;
+    public string[] LevelsInOrderAscending;
     public int currentLevelIndex = 0;
 
     //singleton
@@ -30,7 +30,9 @@ public class SceneController : MonoBehaviour
         SpanningUIController.Instance.ResetUI();
 
         currentLevelIndex++;
-        SceneManager.LoadScene(LevelsInOrderAscending[currentLevelIndex].name.ToString());
+        SceneManager.LoadScene(LevelsInOrderAscending[currentLevelIndex]);
+
+        SpanningUIController.Instance.OnLevelStart();
 
         isInLevel = true;
     }
@@ -40,7 +42,9 @@ public class SceneController : MonoBehaviour
         SpanningUIController.Instance.ResetUI();
 
         currentLevelIndex = index;
-        SceneManager.LoadScene(LevelsInOrderAscending[index].name.ToString());
+        SceneManager.LoadScene(LevelsInOrderAscending[index]);
+
+        SpanningUIController.Instance.OnLevelStart();
 
         isInLevel = true;
     }
@@ -48,13 +52,31 @@ public class SceneController : MonoBehaviour
     public void ResetCurrentLevel()
     {
         SwitchToLevelByIndex(currentLevelIndex);
+
+        StartCoroutine(ResetSequence());
+    }
+
+    public IEnumerator ResetSequence()
+    {
+        yield return new WaitForEndOfFrame();
+        yield return new WaitForEndOfFrame();
+
+        //show thing
+        SpanningUIController.Instance.ToggleWhyFailed();
+
+        yield return new WaitForSeconds(2f);
+
+        //stop show thing
+        SpanningUIController.Instance.ToggleWhyFailed();
     }
 
     public void GoToMainMenu()
     {
         SpanningUIController.Instance.ResetUI();
 
-        SceneManager.LoadScene(mainMenu.name);
+        StopAllCoroutines();
+
+        SceneManager.LoadScene(mainMenuNamn);
 
         isInLevel = false;
     }

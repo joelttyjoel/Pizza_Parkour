@@ -34,6 +34,7 @@ public class MovementEditor : Editor
         jumpAttributes = new SerializedProperty[]
         {
             serializedObject.FindProperty("jumpVelocity"),
+            serializedObject.FindProperty("airJumpVelocity"),
             serializedObject.FindProperty("shortJumpMultiplier"),
             serializedObject.FindProperty("shortAirJumpMultiplier"),
             serializedObject.FindProperty("fallMultiplier"),

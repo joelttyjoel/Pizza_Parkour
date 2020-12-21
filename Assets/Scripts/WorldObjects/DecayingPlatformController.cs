@@ -11,14 +11,16 @@ public class DecayingPlatformController : MonoBehaviour
 
     private bool isDecayed = false;
     private SpriteRenderer thisSR;
-    private BoxCollider2D thisC;
+    private EdgeCollider2D thisC;
     private PathFollower thisAnimation;
+    private AudioSource thisAudioSource;
 
     private void Start()
     {
         thisSR = GetComponentInChildren<SpriteRenderer>();
-        thisC = GetComponent<BoxCollider2D>();
+        thisC = GetComponent<EdgeCollider2D>();
         thisAnimation = GetComponentInChildren<PathFollower>();
+        thisAudioSource = GetComponent<AudioSource>();
 
         thisAnimation.enabled = false;
     }
@@ -34,6 +36,7 @@ public class DecayingPlatformController : MonoBehaviour
 
     private IEnumerator DecayProcess()
     {
+        thisAudioSource.Play();
         //Debug.Log("Start decaying");
         //if animation start here
         thisAnimation.enabled = true;
@@ -42,6 +45,7 @@ public class DecayingPlatformController : MonoBehaviour
         //disable platform because decayed mm yes
         thisSR.enabled = false;
         thisC.enabled = false;
+        thisAudioSource.Stop();
         //start respawn process
         StartCoroutine(RespawnProcess());
     }

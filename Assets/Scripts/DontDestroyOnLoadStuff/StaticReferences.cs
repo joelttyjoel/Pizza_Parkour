@@ -24,13 +24,33 @@ public class StaticReferences : MonoBehaviour
         SceneController.Instance.ExitGame();
     }
 
+    public void SceneController_ResetCurrentLevel()
+    {
+        SceneController.Instance.ResetCurrentLevel();
+    }
+
     public void SpanningUIController_ToggleLevelSelect()
     {
         SpanningUIController.Instance.ToggleLevelSelect();
     }
 
+    public void SpanningUIController_ToggleSettingsMenu()
+    {
+        SpanningUIController.Instance.ToggleSettingsMenu();
+    }
+
     public void SpanningUIController_ShowWinScreen()
     {
         SpanningUIController.Instance.ShowWinScreen();
+    }
+
+    //public void SpanningUIController_UpdateSettingsValues()
+    //{
+    //    SpanningUIController.Instance.UpdateSettingsValues();
+    //}
+
+    public void UpdateVolumeMusic(float value)
+    {
+
     }
 }
