@@ -8,6 +8,7 @@ public class SpanningUIController : MonoBehaviour
 {
     [Header("General stuff")]
     public string winBackgroundToPreventClicks;
+    public string packageLostForTooLongImage;
     [Header("Win Screen Stuff")]
     public string winImage;
     public string winMenu;
@@ -24,6 +25,8 @@ public class SpanningUIController : MonoBehaviour
     public bool levelSelectIsShowing = false;
     [System.NonSerialized]
     public bool settingsIsShowing = false;
+    [System.NonSerialized]
+    public bool packageLostTooLongImageIsShowing = false;
 
     //singleton
     public static SpanningUIController Instance;
@@ -88,6 +91,21 @@ public class SpanningUIController : MonoBehaviour
         yield return new WaitForEndOfFrame();
         GameObject.Find(winImage).SetActive(false);
         GameObject.Find(winMenu).SetActive(false);
+    }
+
+    public void ToggleWhyFailed()
+    {
+        if (!packageLostTooLongImageIsShowing)
+        {
+            GameObject.Find(packageLostForTooLongImage).transform.localPosition = new Vector3(0, 0, -1);
+            GameObject.Find(packageLostForTooLongImage).GetComponent<AudioSource>().Play();
+        }
+        else
+        {
+            GameObject.Find(packageLostForTooLongImage).transform.localPosition = new Vector3(-2000, 0, 0);
+        }
+
+        packageLostTooLongImageIsShowing = !packageLostTooLongImageIsShowing;
     }
 
     public void ToggleLevelSelect()
@@ -167,6 +185,7 @@ public class SpanningUIController : MonoBehaviour
     {
         settingsIsShowing = false;
         levelSelectIsShowing = false;
+        packageLostTooLongImageIsShowing = false;
     }
 
     //public void UpdateSettingsValues()

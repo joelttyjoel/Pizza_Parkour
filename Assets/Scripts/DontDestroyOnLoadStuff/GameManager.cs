@@ -38,6 +38,8 @@ public class GameManager : MonoBehaviour
         //always update mixer values from sliders
         soundMixer.SetFloat("Master", PlayerPrefs.GetFloat("SoundVolume"));
         musicMixer.SetFloat("Master", PlayerPrefs.GetFloat("MusicVolume"));
+
+        PlayerPrefs.Save();
     }
 
     private void ResetMemory()
@@ -46,9 +48,7 @@ public class GameManager : MonoBehaviour
         {
             //levels cleared
             //set all to 0
-            PlayerPrefs.SetInt("hello", 0);
             PlayerPrefs.SetInt(SceneController.Instance.LevelsInOrderAscending[i], 0);
-            PlayerPrefs.Save();
             //set first to 1, is because first level is unlocked by default
             PlayerPrefs.SetInt(SceneController.Instance.LevelsInOrderAscending[0], 1);
             //levels highscore
@@ -58,6 +58,8 @@ public class GameManager : MonoBehaviour
 
         PlayerPrefs.SetFloat("MusicVolume", 0f);
         PlayerPrefs.SetFloat("SoundVolume", 0f);
+
+        PlayerPrefs.Save();
     }
 
     public void UnlockNextLevel()
@@ -68,6 +70,8 @@ public class GameManager : MonoBehaviour
             Debug.Log("unlock: " + SceneController.Instance.LevelsInOrderAscending[SceneController.Instance.currentLevelIndex + 1]);
             PlayerPrefs.SetInt(SceneController.Instance.LevelsInOrderAscending[SceneController.Instance.currentLevelIndex + 1], 1);
         }
+
+        PlayerPrefs.Save();
     }
 
     public void CheckCurrentScoreHighscore()
@@ -84,6 +88,8 @@ public class GameManager : MonoBehaviour
             Debug.Log("New HighScore!!");
             PlayerPrefs.SetFloat(SceneController.Instance.LevelsInOrderAscending[SceneController.Instance.currentLevelIndex] + "_HighScore", LevelClockController.Instance.currentTimeClock);
         }
+
+        PlayerPrefs.Save();
     }
 
     public bool GetUnlockedStateByIndex(int index)
