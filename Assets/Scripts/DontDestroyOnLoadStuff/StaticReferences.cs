@@ -44,10 +44,10 @@ public class StaticReferences : MonoBehaviour
         SpanningUIController.Instance.ShowWinScreen();
     }
 
-    public void SpanningUIController_UpdateSettingsValues()
-    {
-        SpanningUIController.Instance.UpdateSettingsValues();
-    }
+    //public void SpanningUIController_UpdateSettingsValues()
+    //{
+    //    SpanningUIController.Instance.UpdateSettingsValues();
+    //}
 
     public void UpdateVolumeMusic(float value)
     {

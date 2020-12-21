@@ -1812,8 +1812,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 58f659420ac2ebf46a038ec1addb1057, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxSpeed: 10
-  timeToMaxAccel: 0.1
+  maxSpeed: 8
+  timeToMaxAccel: 0.5
   maxAcceleration: 9
   accelCurve:
     serializedVersion: 2
@@ -1841,7 +1841,7 @@ MonoBehaviour:
     m_RotationOrder: 4
   airVelocity: 0
   maxAirSpeed: 0
-  maxFallSpeed: 25
+  maxFallSpeed: 15
   catchHeight: -1
   bumpedHeadWidth: -1
   groundMaskThingsToAvoidTemp:
@@ -1850,11 +1850,11 @@ MonoBehaviour:
   onWallMaskThingsToAvoid:
     serializedVersion: 2
     m_Bits: 1847
-  jumpVelocity: 20.5
-  airJumpVelocity: 18
-  shortJumpMultiplier: 13
+  jumpVelocity: 15
+  airJumpVelocity: 14
+  shortJumpMultiplier: 10
   shortAirJumpMultiplier: 1
-  fallMultiplier: 11.3
+  fallMultiplier: 5
   coyoteTime: -1
   jumpBufferTime: -1
   apexHeight: 0.9

@@ -9,24 +9,18 @@ EditorBuildSettings:
     path: Assets/Scenes/MainMenu.unity
     guid: 5ce7efdb661c4d845bc7154ddd5aa1f0
   - enabled: 1
-    path: Assets/Scenes/Level2.unity
-    guid: 685d22bf31f70c44b82950f075d9b6ce
-  - enabled: 1
-    path: Assets/Scenes/RealLevels/RealLevel1.unity
-    guid: fc917af2bc16fd442bd8155d09733665
-  - enabled: 1
-    path: Assets/Scenes/RealLevels/test.unity
+    path: Assets/Scenes/RealLevels/lvl1.unity
     guid: 05211f267d7dd764bbc9b253eb577ea9
   - enabled: 1
-    path: Assets/Scenes/RealLevels/RealLevel2.unity
-    guid: ba82bf67669242c44b8773d48c2c11c8
+    path: Assets/Scenes/RealLevels/lvl2.unity
+    guid: fc917af2bc16fd442bd8155d09733665
   - enabled: 1
-    path: Assets/Scenes/RealLevels/Level 1.unity
-    guid: 5be0d8709527da24cbff4ed813da5dce
+    path: Assets/Scenes/RealLevels/lvl3.unity
+    guid: 91d5bd6960f9a274a9d1a209dff7b8cd
   - enabled: 1
-    path: Assets/Scenes/RealLevels/RealLevel3.unity
+    path: Assets/Scenes/RealLevels/lvl4.unity
     guid: 9475ad1df1111cf44a064ac6805b7cf4
   - enabled: 1
-    path: Assets/Scenes/RealLevels/RealLevel4.unity
-    guid: 91d5bd6960f9a274a9d1a209dff7b8cd
+    path: Assets/Scenes/RealLevels/lvl5.unity
+    guid: ba82bf67669242c44b8773d48c2c11c8
   m_configObjects: {}

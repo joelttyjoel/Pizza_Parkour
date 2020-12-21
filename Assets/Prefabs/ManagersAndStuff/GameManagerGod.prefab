@@ -49,8 +49,10 @@ MonoBehaviour:
   isInLevel: 0
   mainMenu: {fileID: 102900000, guid: 5ce7efdb661c4d845bc7154ddd5aa1f0, type: 3}
   LevelsInOrderAscending:
+  - {fileID: 102900000, guid: 05211f267d7dd764bbc9b253eb577ea9, type: 3}
   - {fileID: 102900000, guid: fc917af2bc16fd442bd8155d09733665, type: 3}
-  - {fileID: 102900000, guid: af6530d27aa010f47ac40a2df07ed82a, type: 3}
+  - {fileID: 102900000, guid: 91d5bd6960f9a274a9d1a209dff7b8cd, type: 3}
+  - {fileID: 102900000, guid: 9475ad1df1111cf44a064ac6805b7cf4, type: 3}
   - {fileID: 102900000, guid: ba82bf67669242c44b8773d48c2c11c8, type: 3}
   currentLevelIndex: 0
 --- !u!114 &1002698268390939059
@@ -87,7 +89,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   resetPlayerPrefsOnStart: 0
-  showWinScreen: 0
+  soundMixer: {fileID: 24100000, guid: ba19f51629d7a154cb8cda021c05d8b6, type: 2}
+  musicMixer: {fileID: 24100000, guid: 281203ec86a14e546a12b3a99673ef62, type: 2}
 --- !u!82 &1936632764382547719
 AudioSource:
   m_ObjectHideFlags: 0

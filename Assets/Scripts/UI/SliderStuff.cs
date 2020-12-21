@@ -17,16 +17,21 @@ public class SliderStuff : MonoBehaviour
         thisSlider.onValueChanged.AddListener(delegate { OnValueChanged(); });
     }
 
-    public void UpdateValues()
+    public void UpdateValuesFromMixer()
     {
         float temp = 0f;
         mixerToSet.GetFloat("Master", out temp);
         thisSlider.value = temp;
     }
 
-    public void SetValues(float value)
+    public void SetValuesOnMixer(float value)
     {
         mixerToSet.SetFloat("Master", value);
+    }
+
+    private void OnEnable()
+    {
+        UpdateValuesFromMixer();
     }
 
     public void OnValueChanged()

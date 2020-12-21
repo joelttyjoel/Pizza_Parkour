@@ -51,18 +51,19 @@ public class SpanningUIController : MonoBehaviour
     public void ShowWinScreen()
     {
         //yes but have to to avoid enabled menu clicking stuff
-        GameObject[] allObjects = Resources.FindObjectsOfTypeAll<GameObject>();
-        foreach (GameObject a in allObjects)
-        {
-            if (a.name == winImage)
-            {
-                a.SetActive(true);
-            }
-            else if(a.name == winMenu)
-            {
-                a.SetActive(true);
-            }
-        }
+        GameObject.Find("WinScreen").transform.Find(winImage).gameObject.SetActive(true);
+        GameObject.Find("WinScreen").transform.Find(winMenu).gameObject.SetActive(true);
+        //foreach (GameObject a in allObjects)
+        //{
+        //    if (a.name == winImage)
+        //    {
+        //        a.SetActive(true);
+        //    }
+        //    else if(a.name == winMenu)
+        //    {
+        //        a.SetActive(true);
+        //    }
+        //}
 
         //update score from clock
         GameObject.Find(scoreText).GetComponent<Text>().text = "Level Score: " + LevelClockController.Instance.currentTimeClock.ToString("F2");
@@ -93,22 +94,37 @@ public class SpanningUIController : MonoBehaviour
     {
         if (!levelSelectIsShowing)
         {
+            //Find and enable levelselect
+            GameObject.Find("Canvas").transform.Find(levelSelector).gameObject.SetActive(true);
+            //GameObject[] allObjects = Resources.FindObjectsOfTypeAll<GameObject>();
+            //foreach (GameObject a in allObjects)
+            //{
+            //    if (a.name == levelSelector)
+            //    {
+            //        a.SetActive(true);
+            //        break;
+            //    }
+            //}
+
             //update buttons
             Button[] allButtonsInOrderAscending = GameObject.Find("LevelButtons").GetComponentsInChildren<Button>();
 
             for (int i = 0; i < allButtonsInOrderAscending.Length; i++)
             {
                 allButtonsInOrderAscending[i].interactable = GameManager.Instance.GetUnlockedStateByIndex(i);
-                if (!GameManager.Instance.GetUnlockedStateByIndex(i)) allButtonsInOrderAscending[i].GetComponent<UIFixedAnimation>().Pause();
+                //if (!GameManager.Instance.GetUnlockedStateByIndex(i)) allButtonsInOrderAscending[i].GetComponent<UIFixedAnimation>().Pause();
             }
 
-            GameObject.Find(levelSelector).transform.localPosition = new Vector3(0, 0, 0);
+            GameObject.Find(levelSelector).transform.localPosition = new Vector3(0, 0, -1);
             GameObject.Find(winBackgroundToPreventClicks).GetComponent<Image>().enabled = true;
         }
         else
         {
             GameObject.Find(levelSelector).transform.localPosition = new Vector3(-2000, 0, 0);
             GameObject.Find(winBackgroundToPreventClicks).GetComponent<Image>().enabled = false;
+
+            //disable levelselect
+            GameObject.Find(levelSelector).SetActive(false);
         }
 
         levelSelectIsShowing = !levelSelectIsShowing;
@@ -118,13 +134,30 @@ public class SpanningUIController : MonoBehaviour
     {
         if (!settingsIsShowing)
         {
-            GameObject.Find(settingsName).transform.localPosition = new Vector3(0, 0, 0);
+            //find and enable settings
+            GameObject.Find("Canvas").transform.Find(settingsName).gameObject.SetActive(true);
+            //GameObject[] allObjects = Resources.FindObjectsOfTypeAll<GameObject>();
+            //foreach (GameObject a in allObjects)
+            //{
+            //    if (a.name == settingsName)
+            //    {
+            //        a.SetActive(true);
+            //        break;
+            //    }
+            //}
+
+            GameObject.Find(settingsName).transform.localPosition = new Vector3(0, 0, -1);
             GameObject.Find(winBackgroundToPreventClicks).GetComponent<Image>().enabled = true;
+
+            //GameManager.Instance.UpdateSettingsByStoredValues();
         }
         else
         {
             GameObject.Find(settingsName).transform.localPosition = new Vector3(-2000, 0, 0);
             GameObject.Find(winBackgroundToPreventClicks).GetComponent<Image>().enabled = false;
+
+            //disable settings menu
+            GameObject.Find(settingsName).SetActive(false);
         }
 
         settingsIsShowing = !settingsIsShowing;
@@ -136,15 +169,15 @@ public class SpanningUIController : MonoBehaviour
         levelSelectIsShowing = false;
     }
 
-    public void UpdateSettingsValues()
-    {
-        GameObject.Find(sliderMusicName).GetComponent<SliderStuff>().UpdateValues();
-        GameObject.Find(sliderSoundName).GetComponent<SliderStuff>().UpdateValues();
-    }
+    //public void UpdateSettingsValues()
+    //{
+    //    GameObject.Find(sliderMusicName).GetComponent<SliderStuff>().UpdateValues();
+    //    GameObject.Find(sliderSoundName).GetComponent<SliderStuff>().UpdateValues();
+    //}
 
-    public void SetSettingsToSaved(float volumeMusic, float volumeSound)
-    {
-        GameObject.Find(sliderMusicName).GetComponent<SliderStuff>().SetValues(volumeMusic);
-        GameObject.Find(sliderSoundName).GetComponent<SliderStuff>().SetValues(volumeSound);
-    }
+    //public void SetSettingsToSaved(float volumeMusic, float volumeSound)
+    //{
+    //    GameObject.Find(sliderMusicName).GetComponent<SliderStuff>().SetValues(volumeMusic);
+    //    GameObject.Find(sliderSoundName).GetComponent<SliderStuff>().SetValues(volumeSound);
+    //}
 }

@@ -180,7 +180,7 @@ MonoBehaviour:
   animateOnSelect: 1
   onClickSelectOther: 0
   selectOnMouseover: 1
-  selectOnEnable: 1
+  selectOnEnable: 0
   hasAnimation: 1
   isAboveMainMenu: 1
   objectToSelect: {fileID: 0}
@@ -5592,7 +5592,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &577985812
 RectTransform:
   m_ObjectHideFlags: 0
@@ -5612,7 +5612,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -1769.4, y: 8.8097}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 545.5608, y: 248.13016}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &577985813
@@ -5749,7 +5749,7 @@ MonoBehaviour:
   animateOnSelect: 0
   onClickSelectOther: 1
   selectOnMouseover: 1
-  selectOnEnable: 0
+  selectOnEnable: 1
   hasAnimation: 0
   isAboveMainMenu: 1
   objectToSelect: {fileID: 2063312046}
@@ -6583,7 +6583,7 @@ RectTransform:
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMax: {x: 0.8, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 10, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -6696,8 +6696,8 @@ RectTransform:
   m_Father: {fileID: 1444949983}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMin: {x: 0.8, y: 0}
+  m_AnchorMax: {x: 0.8, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 20, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -6840,7 +6840,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Level 2
+  m_Text: Level 3
 --- !u!222 &835281448
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -6882,7 +6882,7 @@ RectTransform:
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMax: {x: 0.8, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 10, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -7007,7 +7007,7 @@ MonoBehaviour:
   animateOnSelect: 1
   onClickSelectOther: 0
   selectOnMouseover: 1
-  selectOnEnable: 1
+  selectOnEnable: 0
   hasAnimation: 1
   isAboveMainMenu: 1
   objectToSelect: {fileID: 0}
@@ -12536,7 +12536,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Level 2
+  m_Text: Level 4
 --- !u!222 &1126816120
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -17820,7 +17820,7 @@ MonoBehaviour:
   animateOnSelect: 1
   onClickSelectOther: 0
   selectOnMouseover: 1
-  selectOnEnable: 1
+  selectOnEnable: 0
   hasAnimation: 1
   isAboveMainMenu: 1
   objectToSelect: {fileID: 0}
@@ -22928,7 +22928,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1604271559
 RectTransform:
   m_ObjectHideFlags: 0
@@ -22949,7 +22949,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -1769.3, y: -371}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 545.6936, y: 248.19055}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1604271560
@@ -37890,7 +37890,7 @@ MonoBehaviour:
   animateOnSelect: 1
   onClickSelectOther: 0
   selectOnMouseover: 1
-  selectOnEnable: 1
+  selectOnEnable: 0
   hasAnimation: 1
   isAboveMainMenu: 1
   objectToSelect: {fileID: 0}
@@ -38255,8 +38255,8 @@ RectTransform:
   m_Father: {fileID: 1517275807}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMin: {x: 0.8, y: 0}
+  m_AnchorMax: {x: 0.8, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 20, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -38961,6 +38961,11 @@ PrefabInstance:
       propertyPath: m_Enabled
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 1002698268390939058, guid: 84202c0bd2ec5294ebc7df1734dd3624,
+        type: 3}
+      propertyPath: resetPlayerPrefsOnStart
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1002698268390939060, guid: 84202c0bd2ec5294ebc7df1734dd3624,
         type: 3}
       propertyPath: LevelsInOrderAscending.Array.size
@@ -38969,27 +38974,33 @@ PrefabInstance:
     - target: {fileID: 1002698268390939060, guid: 84202c0bd2ec5294ebc7df1734dd3624,
         type: 3}
       propertyPath: LevelsInOrderAscending.Array.data[3]
-      value: 
-      objectReference: {fileID: 102900000, guid: 91d5bd6960f9a274a9d1a209dff7b8cd,
-        type: 3}
+      value: lvl4
+      objectReference: {fileID: 0}
     - target: {fileID: 1002698268390939060, guid: 84202c0bd2ec5294ebc7df1734dd3624,
         type: 3}
       propertyPath: LevelsInOrderAscending.Array.data[1]
-      value: 
-      objectReference: {fileID: 102900000, guid: ba82bf67669242c44b8773d48c2c11c8,
-        type: 3}
+      value: lvl2
+      objectReference: {fileID: 0}
     - target: {fileID: 1002698268390939060, guid: 84202c0bd2ec5294ebc7df1734dd3624,
         type: 3}
       propertyPath: LevelsInOrderAscending.Array.data[2]
-      value: 
-      objectReference: {fileID: 102900000, guid: 9475ad1df1111cf44a064ac6805b7cf4,
-        type: 3}
+      value: lvl3
+      objectReference: {fileID: 0}
     - target: {fileID: 1002698268390939060, guid: 84202c0bd2ec5294ebc7df1734dd3624,
         type: 3}
       propertyPath: LevelsInOrderAscending.Array.data[4]
-      value: 
-      objectReference: {fileID: 102900000, guid: 5be0d8709527da24cbff4ed813da5dce,
+      value: lvl5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1002698268390939060, guid: 84202c0bd2ec5294ebc7df1734dd3624,
         type: 3}
+      propertyPath: LevelsInOrderAscending.Array.data[0]
+      value: lvl1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1002698268390939060, guid: 84202c0bd2ec5294ebc7df1734dd3624,
+        type: 3}
+      propertyPath: mainMenuNamn
+      value: MainMenu
+      objectReference: {fileID: 0}
     - target: {fileID: 1002698268390939061, guid: 84202c0bd2ec5294ebc7df1734dd3624,
         type: 3}
       propertyPath: m_LocalPosition.x
