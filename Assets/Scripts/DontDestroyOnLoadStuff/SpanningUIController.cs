@@ -99,7 +99,7 @@ public class SpanningUIController : MonoBehaviour
             for (int i = 0; i < allButtonsInOrderAscending.Length; i++)
             {
                 allButtonsInOrderAscending[i].interactable = GameManager.Instance.GetUnlockedStateByIndex(i);
-                if(!GameManager.Instance.GetUnlockedStateByIndex(i)) allButtonsInOrderAscending[i].GetComponent<UIFixedAnimation>().Pause();
+                if (!GameManager.Instance.GetUnlockedStateByIndex(i)) allButtonsInOrderAscending[i].GetComponent<UIFixedAnimation>().Pause();
             }
 
             GameObject.Find(levelSelector).transform.localPosition = new Vector3(0, 0, 0);

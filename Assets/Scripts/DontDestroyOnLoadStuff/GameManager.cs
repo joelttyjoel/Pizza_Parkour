@@ -36,14 +36,14 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         //if not created, create playerprefs based on current levels (or if want to reset)
-        if(PlayerPrefs.GetInt("HasPlayedBefore") == 0 || resetPlayerPrefsOnStart)
+        if (PlayerPrefs.GetInt("HasPlayedBefore") == 0 || resetPlayerPrefsOnStart)
         {
             PlayerPrefs.SetInt("HasPlayedBefore", 1);
 
             ResetMemory();
         }
 
-        if(gameManagerStartsOnFirstScene) SpanningUIController.Instance.SetSettingsToSaved(PlayerPrefs.GetFloat("MusicVolume"), PlayerPrefs.GetFloat("SoundVolume"));
+        if (gameManagerStartsOnFirstScene) SpanningUIController.Instance.SetSettingsToSaved(PlayerPrefs.GetFloat("MusicVolume"), PlayerPrefs.GetFloat("SoundVolume"));
     }
 
     private void ResetMemory()
@@ -67,7 +67,7 @@ public class GameManager : MonoBehaviour
     public void UnlockNextLevel()
     {
         //if isnt last level
-        if((SceneController.Instance.currentLevelIndex + 1) < SceneController.Instance.LevelsInOrderAscending.Length)
+        if ((SceneController.Instance.currentLevelIndex + 1) < SceneController.Instance.LevelsInOrderAscending.Length)
         {
             Debug.Log("unlock: " + SceneController.Instance.LevelsInOrderAscending[SceneController.Instance.currentLevelIndex + 1].ToString());
             PlayerPrefs.SetInt(SceneController.Instance.LevelsInOrderAscending[SceneController.Instance.currentLevelIndex + 1].ToString(), 1);
@@ -77,13 +77,13 @@ public class GameManager : MonoBehaviour
     public void CheckCurrentScoreHighscore()
     {
         //if is 0, then is first time setting score, then not new highscore just update score
-        if(PlayerPrefs.GetFloat(SceneController.Instance.LevelsInOrderAscending[SceneController.Instance.currentLevelIndex].ToString() + "_HighScore") == 0f)
+        if (PlayerPrefs.GetFloat(SceneController.Instance.LevelsInOrderAscending[SceneController.Instance.currentLevelIndex].ToString() + "_HighScore") == 0f)
         {
             Debug.Log("New Score Added");
             PlayerPrefs.SetFloat(SceneController.Instance.LevelsInOrderAscending[SceneController.Instance.currentLevelIndex].ToString() + "_HighScore", LevelClockController.Instance.currentTimeClock);
         }
         //if not 0, then lets go compare
-        else if(LevelClockController.Instance.currentTimeClock < PlayerPrefs.GetFloat(SceneController.Instance.LevelsInOrderAscending[SceneController.Instance.currentLevelIndex].ToString() + "_HighScore"))
+        else if (LevelClockController.Instance.currentTimeClock < PlayerPrefs.GetFloat(SceneController.Instance.LevelsInOrderAscending[SceneController.Instance.currentLevelIndex].ToString() + "_HighScore"))
         {
             Debug.Log("New HighScore!!");
             PlayerPrefs.SetFloat(SceneController.Instance.LevelsInOrderAscending[SceneController.Instance.currentLevelIndex].ToString() + "_HighScore", LevelClockController.Instance.currentTimeClock);
@@ -100,5 +100,10 @@ public class GameManager : MonoBehaviour
         {
             return false;
         }
+    }
+
+    private void OnApplicationQuit()
+    {
+        PlayerPrefs.Save();
     }
 }

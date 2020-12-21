@@ -5612,8 +5612,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -1747, y: 8.8097}
-  m_SizeDelta: {x: 582.90356, y: 265.1143}
+  m_AnchoredPosition: {x: -1769.4, y: 8.8097}
+  m_SizeDelta: {x: 545.5608, y: 248.13016}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &577985813
 MonoBehaviour:
@@ -5705,7 +5705,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 265.78, y: 110}
+  m_AnchoredPosition: {x: 253.9, y: 100.5}
   m_SizeDelta: {x: 33.22531, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!61 &589611995
@@ -5906,7 +5906,7 @@ MonoBehaviour:
       m_Calls: []
   m_FontData:
     m_Font: {fileID: 12800000, guid: 6f1912a6374be354fbe36d7f1fe627b1, type: 3}
-    m_FontSize: 21
+    m_FontSize: 20
     m_FontStyle: 0
     m_BestFit: 0
     m_MinSize: 2
@@ -6409,7 +6409,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 265.78, y: 110}
+  m_AnchoredPosition: {x: 253.1, y: 103.2}
   m_SizeDelta: {x: 33.22531, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &762856116
@@ -22949,8 +22949,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -1747, y: -369.09}
-  m_SizeDelta: {x: 582.90356, y: 265.1143}
+  m_AnchoredPosition: {x: -1769.3, y: -371}
+  m_SizeDelta: {x: 545.6936, y: 248.19055}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1604271560
 MonoBehaviour:
@@ -38956,6 +38956,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1002698268390939058, guid: 84202c0bd2ec5294ebc7df1734dd3624,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1002698268390939060, guid: 84202c0bd2ec5294ebc7df1734dd3624,
         type: 3}
       propertyPath: LevelsInOrderAscending.Array.size
@@ -39044,6 +39049,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: GameManagerGod
+      objectReference: {fileID: 0}
+    - target: {fileID: 1002698268390939062, guid: 84202c0bd2ec5294ebc7df1734dd3624,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1936632764382547719, guid: 84202c0bd2ec5294ebc7df1734dd3624,
+        type: 3}
+      propertyPath: Loop
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 84202c0bd2ec5294ebc7df1734dd3624, type: 3}
