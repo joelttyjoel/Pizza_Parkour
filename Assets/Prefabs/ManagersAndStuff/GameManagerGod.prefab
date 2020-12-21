@@ -47,11 +47,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isInLevel: 0
-  mainMenu: {fileID: 102900000, guid: 5ce7efdb661c4d845bc7154ddd5aa1f0, type: 3}
+  mainMenuNamn: 
   LevelsInOrderAscending:
-  - {fileID: 102900000, guid: fc917af2bc16fd442bd8155d09733665, type: 3}
-  - {fileID: 102900000, guid: af6530d27aa010f47ac40a2df07ed82a, type: 3}
-  - {fileID: 102900000, guid: ba82bf67669242c44b8773d48c2c11c8, type: 3}
+  - 
+  - 
+  - 
+  - 
+  - 
   currentLevelIndex: 0
 --- !u!114 &1002698268390939059
 MonoBehaviour:
@@ -66,6 +68,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   winBackgroundToPreventClicks: winBackgroundToPreventClicks
+  packageLostForTooLongImage: ReasonWhyFailed
   winImage: WinImage
   winMenu: BackgroundButtons
   scoreText: ScoreText
@@ -87,7 +90,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   resetPlayerPrefsOnStart: 0
-  showWinScreen: 0
+  soundMixer: {fileID: 24100000, guid: ba19f51629d7a154cb8cda021c05d8b6, type: 2}
+  musicMixer: {fileID: 24100000, guid: 281203ec86a14e546a12b3a99673ef62, type: 2}
 --- !u!82 &1936632764382547719
 AudioSource:
   m_ObjectHideFlags: 0
@@ -103,7 +107,7 @@ AudioSource:
   m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1
-  Loop: 0
+  Loop: 1
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0

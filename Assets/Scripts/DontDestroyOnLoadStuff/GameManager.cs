@@ -1,13 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Audio;
 
 public class GameManager : MonoBehaviour
 {
     [Header("God, controls and keeps track of stuff")]
-    public bool gameManagerStartsOnFirstScene = true;
     public bool resetPlayerPrefsOnStart = false;
-    public bool showWinScreen = false;
+    public AudioMixer soundMixer;
+    public AudioMixer musicMixer;
 
     //singleton
     public static GameManager Instance;
@@ -24,15 +25,6 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private void Update()
-    {
-        if(showWinScreen)
-        {
-            showWinScreen = false;
-            SpanningUIController.Instance.ShowWinScreen();
-        }
-    }
-
     private void Start()
     {
         //if not created, create playerprefs based on current levels (or if want to reset)
@@ -43,7 +35,11 @@ public class GameManager : MonoBehaviour
             ResetMemory();
         }
 
-        if (gameManagerStartsOnFirstScene) SpanningUIController.Instance.SetSettingsToSaved(PlayerPrefs.GetFloat("MusicVolume"), PlayerPrefs.GetFloat("SoundVolume"));
+        //always update mixer values from sliders
+        soundMixer.SetFloat("Master", PlayerPrefs.GetFloat("SoundVolume"));
+        musicMixer.SetFloat("Master", PlayerPrefs.GetFloat("MusicVolume"));
+
+        PlayerPrefs.Save();
     }
 
     private void ResetMemory()
@@ -52,16 +48,18 @@ public class GameManager : MonoBehaviour
         {
             //levels cleared
             //set all to 0
-            PlayerPrefs.SetInt(SceneController.Instance.LevelsInOrderAscending[i].ToString(), 0);
+            PlayerPrefs.SetInt(SceneController.Instance.LevelsInOrderAscending[i], 0);
             //set first to 1, is because first level is unlocked by default
-            PlayerPrefs.SetInt(SceneController.Instance.LevelsInOrderAscending[0].ToString(), 1);
+            PlayerPrefs.SetInt(SceneController.Instance.LevelsInOrderAscending[0], 1);
             //levels highscore
             //set all to shit scores
-            PlayerPrefs.SetFloat(SceneController.Instance.LevelsInOrderAscending[i].ToString() + "_HighScore", 0f);
+            PlayerPrefs.SetFloat(SceneController.Instance.LevelsInOrderAscending[i] + "_HighScore", 0f);
         }
 
         PlayerPrefs.SetFloat("MusicVolume", 0f);
         PlayerPrefs.SetFloat("SoundVolume", 0f);
+
+        PlayerPrefs.Save();
     }
 
     public void UnlockNextLevel()
@@ -69,30 +67,34 @@ public class GameManager : MonoBehaviour
         //if isnt last level
         if ((SceneController.Instance.currentLevelIndex + 1) < SceneController.Instance.LevelsInOrderAscending.Length)
         {
-            Debug.Log("unlock: " + SceneController.Instance.LevelsInOrderAscending[SceneController.Instance.currentLevelIndex + 1].ToString());
-            PlayerPrefs.SetInt(SceneController.Instance.LevelsInOrderAscending[SceneController.Instance.currentLevelIndex + 1].ToString(), 1);
+            Debug.Log("unlock: " + SceneController.Instance.LevelsInOrderAscending[SceneController.Instance.currentLevelIndex + 1]);
+            PlayerPrefs.SetInt(SceneController.Instance.LevelsInOrderAscending[SceneController.Instance.currentLevelIndex + 1], 1);
         }
+
+        PlayerPrefs.Save();
     }
 
     public void CheckCurrentScoreHighscore()
     {
         //if is 0, then is first time setting score, then not new highscore just update score
-        if (PlayerPrefs.GetFloat(SceneController.Instance.LevelsInOrderAscending[SceneController.Instance.currentLevelIndex].ToString() + "_HighScore") == 0f)
+        if (PlayerPrefs.GetFloat(SceneController.Instance.LevelsInOrderAscending[SceneController.Instance.currentLevelIndex] + "_HighScore") == 0f)
         {
             Debug.Log("New Score Added");
-            PlayerPrefs.SetFloat(SceneController.Instance.LevelsInOrderAscending[SceneController.Instance.currentLevelIndex].ToString() + "_HighScore", LevelClockController.Instance.currentTimeClock);
+            PlayerPrefs.SetFloat(SceneController.Instance.LevelsInOrderAscending[SceneController.Instance.currentLevelIndex] + "_HighScore", LevelClockController.Instance.currentTimeClock);
         }
         //if not 0, then lets go compare
-        else if (LevelClockController.Instance.currentTimeClock < PlayerPrefs.GetFloat(SceneController.Instance.LevelsInOrderAscending[SceneController.Instance.currentLevelIndex].ToString() + "_HighScore"))
+        else if (LevelClockController.Instance.currentTimeClock < PlayerPrefs.GetFloat(SceneController.Instance.LevelsInOrderAscending[SceneController.Instance.currentLevelIndex] + "_HighScore"))
         {
             Debug.Log("New HighScore!!");
-            PlayerPrefs.SetFloat(SceneController.Instance.LevelsInOrderAscending[SceneController.Instance.currentLevelIndex].ToString() + "_HighScore", LevelClockController.Instance.currentTimeClock);
+            PlayerPrefs.SetFloat(SceneController.Instance.LevelsInOrderAscending[SceneController.Instance.currentLevelIndex] + "_HighScore", LevelClockController.Instance.currentTimeClock);
         }
+
+        PlayerPrefs.Save();
     }
 
     public bool GetUnlockedStateByIndex(int index)
     {
-        if(PlayerPrefs.GetInt(SceneController.Instance.LevelsInOrderAscending[index].ToString()) == 1)
+        if(PlayerPrefs.GetInt(SceneController.Instance.LevelsInOrderAscending[index]) == 1)
         {
             return true;
         }
@@ -101,6 +103,11 @@ public class GameManager : MonoBehaviour
             return false;
         }
     }
+
+    //public void UpdateSettingsByStoredValues()
+    //{
+    //    SpanningUIController.Instance.SetSettingsToSaved(PlayerPrefs.GetFloat("MusicVolume"), PlayerPrefs.GetFloat("SoundVolume"));
+    //}
 
     private void OnApplicationQuit()
     {
