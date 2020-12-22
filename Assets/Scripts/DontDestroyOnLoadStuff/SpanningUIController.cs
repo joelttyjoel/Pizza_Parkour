@@ -43,14 +43,6 @@ public class SpanningUIController : MonoBehaviour
         }
     }
 
-    private void Update()
-    {
-        if(Input.GetButtonDown("Cancel"))
-        {
-            if (SceneController.Instance.isInLevel) SceneController.Instance.GoToMainMenu();
-        }
-    }
-
     public void ShowWinScreen()
     {
         //yes but have to to avoid enabled menu clicking stuff
@@ -80,6 +72,7 @@ public class SpanningUIController : MonoBehaviour
         //doesent need to be reset because only outcome is change scene
     }
 
+    #region onLevelStart
     public void OnLevelStart()
     {
         StartCoroutine(OnLevelStartWaitForStart());
@@ -92,8 +85,29 @@ public class SpanningUIController : MonoBehaviour
         GameObject.Find(winImage).SetActive(false);
         GameObject.Find(winMenu).SetActive(false);
     }
+    #endregion
+    #region resetSequence
+    public void ShowPackageDecayOnReset()
+    {
+        StartCoroutine(ResetSequence());
+    }
 
-    public void ToggleWhyFailed()
+    public IEnumerator ResetSequence()
+    {
+        yield return new WaitForEndOfFrame();
+        yield return new WaitForEndOfFrame();
+        yield return new WaitForEndOfFrame();
+
+        //show thing
+        ToggleWhyFailed();
+
+        yield return new WaitForSeconds(2f);
+
+        //stop show thing
+        ToggleWhyFailed();
+    }
+
+    private void ToggleWhyFailed()
     {
         if (!packageLostTooLongImageIsShowing)
         {
@@ -107,6 +121,7 @@ public class SpanningUIController : MonoBehaviour
 
         packageLostTooLongImageIsShowing = !packageLostTooLongImageIsShowing;
     }
+    #endregion
 
     public void ToggleLevelSelect()
     {

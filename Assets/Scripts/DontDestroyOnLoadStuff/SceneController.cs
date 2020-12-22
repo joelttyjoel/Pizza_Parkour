@@ -52,22 +52,6 @@ public class SceneController : MonoBehaviour
     public void ResetCurrentLevel()
     {
         SwitchToLevelByIndex(currentLevelIndex);
-
-        StartCoroutine(ResetSequence());
-    }
-
-    public IEnumerator ResetSequence()
-    {
-        yield return new WaitForEndOfFrame();
-        yield return new WaitForEndOfFrame();
-
-        //show thing
-        SpanningUIController.Instance.ToggleWhyFailed();
-
-        yield return new WaitForSeconds(2f);
-
-        //stop show thing
-        SpanningUIController.Instance.ToggleWhyFailed();
     }
 
     public void GoToMainMenu()

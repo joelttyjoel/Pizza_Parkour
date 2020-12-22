@@ -593,6 +593,9 @@ public class MovementScript : MonoBehaviour
             tile = tm?.GetTile(tilePos);
         }
 
+        //added this to avoid error "no instance of object"
+        if (tile == null) return groundTypes[0];
+
         tName = tile.name;
         for (int i = 0; i < groundTypes.Length; i++)
         {
