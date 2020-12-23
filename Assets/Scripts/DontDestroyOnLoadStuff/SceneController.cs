@@ -58,8 +58,6 @@ public class SceneController : MonoBehaviour
     {
         SpanningUIController.Instance.ResetUI();
 
-        StopAllCoroutines();
-
         SceneManager.LoadScene(mainMenuNamn);
 
         isInLevel = false;

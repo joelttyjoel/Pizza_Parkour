@@ -60,11 +60,14 @@ public class ButtonStuff : MonoBehaviour
                 transform.localPosition = new Vector3(thisAnimation.startV3.x, thisAnimation.startV3.y, thisAnimation.startV3.z);
             }
             animationIsPlaying = false;
+
+            SpanningUIController.Instance.PlaySelectSound();
         }
     }
 
     private void OnClick()
     {
+        Debug.Log("clicked" + gameObject.name);
         if (onClickSelectOther)
         {
             EventSystem.current.SetSelectedGameObject(objectToSelect);

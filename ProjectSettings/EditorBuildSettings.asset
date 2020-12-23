@@ -9,8 +9,11 @@ EditorBuildSettings:
     path: Assets/Scenes/MainMenu.unity
     guid: 5ce7efdb661c4d845bc7154ddd5aa1f0
   - enabled: 1
+    path: Assets/Scenes/RealLevels/lvl0.unity
+    guid: e6f9ba08f93be6e4490106a50f390b38
+  - enabled: 1
     path: Assets/Scenes/RealLevels/lvl1.unity
-    guid: 05211f267d7dd764bbc9b253eb577ea9
+    guid: 6419b182d0794094987f0a008532e22f
   - enabled: 1
     path: Assets/Scenes/RealLevels/lvl2.unity
     guid: fc917af2bc16fd442bd8155d09733665
@@ -23,4 +26,16 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/RealLevels/lvl5.unity
     guid: ba82bf67669242c44b8773d48c2c11c8
+  - enabled: 1
+    path: Assets/Scenes/RealLevels/lvl6.unity
+    guid: 7f3c8f2f11998b647aead5b20cc33c11
+  - enabled: 1
+    path: Assets/Scenes/RealLevels/lvl7.unity
+    guid: 05211f267d7dd764bbc9b253eb577ea9
+  - enabled: 1
+    path: Assets/Scenes/RealLevels/lvl8.unity
+    guid: 7cb8609beda1fca4893e0dab445e0ad1
+  - enabled: 1
+    path: Assets/Scenes/RealLevels/lvl9.unity
+    guid: 21fa28b43a91bb0459cec40c5160f499
   m_configObjects: {}

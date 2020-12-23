@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using EasyUIAnimator;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 public class SpanningUIController : MonoBehaviour
 {
@@ -20,6 +21,8 @@ public class SpanningUIController : MonoBehaviour
     public string settingsName;
     public string sliderMusicName;
     public string sliderSoundName;
+    [Header("UI audio")]
+    public AudioSource selectionSound;
     
     [System.NonSerialized]
     public bool levelSelectIsShowing = false;
@@ -27,6 +30,9 @@ public class SpanningUIController : MonoBehaviour
     public bool settingsIsShowing = false;
     [System.NonSerialized]
     public bool packageLostTooLongImageIsShowing = false;
+    private bool winScreenIsShowing = false;
+
+    private GameObject previouslySelectedObject;
 
     //singleton
     public static SpanningUIController Instance;
@@ -43,8 +49,33 @@ public class SpanningUIController : MonoBehaviour
         }
     }
 
+    private void Start()
+    {
+        previouslySelectedObject = EventSystem.current.currentSelectedGameObject;
+    }
+
+    private void Update()
+    {
+        if(previouslySelectedObject != EventSystem.current.currentSelectedGameObject)
+        {
+            previouslySelectedObject = EventSystem.current.currentSelectedGameObject;
+
+            //on select change
+            //now, shh, but yes
+            if(SceneController.Instance.isInLevel && winScreenIsShowing)
+            {
+                PlaySelectSound();
+            }
+            else if(!SceneController.Instance.isInLevel)
+            {
+                PlaySelectSound();
+            }
+        }
+    }
+
     public void ShowWinScreen()
     {
+        winScreenIsShowing = true;
         //yes but have to to avoid enabled menu clicking stuff
         GameObject.Find("WinScreen").transform.Find(winImage).gameObject.SetActive(true);
         GameObject.Find("WinScreen").transform.Find(winMenu).gameObject.SetActive(true);
@@ -201,6 +232,11 @@ public class SpanningUIController : MonoBehaviour
         settingsIsShowing = false;
         levelSelectIsShowing = false;
         packageLostTooLongImageIsShowing = false;
+    }
+
+    public void PlaySelectSound()
+    {
+        selectionSound.Play();
     }
 
     //public void UpdateSettingsValues()
