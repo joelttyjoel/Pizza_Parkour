@@ -27,6 +27,7 @@ public class ObjectiveSelfController : MonoBehaviour
                 //old remove box
                 //GameObject.Find("Player").GetComponent<InteractObjectiveController>().RemoveObjectiveFromWorld(this.transform);
                 //new reset level
+                SpanningUIController.Instance.ShowPackageDecayOnReset();
                 SceneController.Instance.ResetCurrentLevel();
             }
         }

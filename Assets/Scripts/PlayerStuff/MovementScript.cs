@@ -31,6 +31,9 @@ public class MovementScript : MonoBehaviour
     bool facingLeft;   //make sure to initilize to correct direction
     bool hasAirJumped;
 
+    //TEMP
+    public bool canMove = true;
+
     float groundRayOriginOffset;
     float lastVel;
 
@@ -180,6 +183,8 @@ public class MovementScript : MonoBehaviour
     void Update()
     {
         rb.gravityScale = gratvityScale;    //temp, move to start when value is tweaked enough
+
+        if (!canMove) return;
 
         int hInt = Mathf.RoundToInt(Input.GetAxisRaw("Horizontal"));
         bool j = Input.GetButtonDown("Jump");                           //record j until jumpBuffer end
@@ -514,7 +519,7 @@ public class MovementScript : MonoBehaviour
 
         if (hit.collider != null)
         {
-            Debug.Log(hit.collider.name);
+            //Debug.Log(hit.collider.name);
             if (Mathf.Round(Vector2.Dot(Vector2.left * dir, hit.normal)) == 1)  //check if wall
             {
                 return true;
@@ -592,6 +597,9 @@ public class MovementScript : MonoBehaviour
             tilePos = tm.WorldToCell(new Vector3(position.x + 0.5f * offsetSide, position.y - 0.5f));    //offset to get the middle of the tile, otherwise sometimes the tile above or adjacent the intended might be returned
             tile = tm?.GetTile(tilePos);
         }
+
+        //added this to avoid error "no instance of object"
+        if (tile == null) return groundTypes[0];
 
         tName = tile.name;
         for (int i = 0; i < groundTypes.Length; i++)
