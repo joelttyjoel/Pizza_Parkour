@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using EasyUIAnimator;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 public class SpanningUIController : MonoBehaviour
 {
@@ -20,6 +21,9 @@ public class SpanningUIController : MonoBehaviour
     public string settingsName;
     public string sliderMusicName;
     public string sliderSoundName;
+    [Header("UI audio")]
+    public AudioSource selectionSound;
+    public AudioSource submitSound;
     
     [System.NonSerialized]
     public bool levelSelectIsShowing = false;
@@ -27,6 +31,10 @@ public class SpanningUIController : MonoBehaviour
     public bool settingsIsShowing = false;
     [System.NonSerialized]
     public bool packageLostTooLongImageIsShowing = false;
+    [System.NonSerialized]
+    public bool winScreenIsShowing = false;
+
+    private GameObject previouslySelectedObject;
 
     //singleton
     public static SpanningUIController Instance;
@@ -43,16 +51,59 @@ public class SpanningUIController : MonoBehaviour
         }
     }
 
+    private void Start()
+    {
+        previouslySelectedObject = EventSystem.current.currentSelectedGameObject;
+    }
+
     private void Update()
     {
-        if(Input.GetButtonDown("Cancel"))
+        //IF PRESS ANY BUTTON, IF CHANGES SELECTED OBJECT, IF IN MENU OR IN WIN SCREEN, PLAY SOUND
+        if(Mathf.RoundToInt(Input.GetAxisRaw("Horizontal")) != 0 || Mathf.RoundToInt(Input.GetAxisRaw("Vertical")) != 0)
         {
-            if (SceneController.Instance.isInLevel) SceneController.Instance.GoToMainMenu();
+            //if clicked off selection and is trying to navitage with buttons
+            if (EventSystem.current.currentSelectedGameObject == null) EventSystem.current.SetSelectedGameObject(previouslySelectedObject);
+
+            if (previouslySelectedObject != EventSystem.current.currentSelectedGameObject)
+            {
+                previouslySelectedObject = EventSystem.current.currentSelectedGameObject;
+
+                //on select change
+                //now, shh, but yes
+                if (SceneController.Instance.isInLevel && winScreenIsShowing)
+                {
+                    PlaySelectSound();
+                }
+                else if (!SceneController.Instance.isInLevel)
+                {
+                    PlaySelectSound();
+                }
+            }
+            ////IF PRESS SUBMIT, IF CHANGES SELECTED OBJECT, IF IN MENU OR IN WIN SCREEN, PLAY SOUND
+            //if (Input.GetButtonDown("Submit"))
+            //{
+            //    if (previouslySelectedObject != EventSystem.current.currentSelectedGameObject)
+            //    {
+            //        previouslySelectedObject = EventSystem.current.currentSelectedGameObject;
+
+            //        //on select change
+            //        //now, shh, but yes
+            //        if (SceneController.Instance.isInLevel && winScreenIsShowing)
+            //        {
+            //            PlaySubmitSound();
+            //        }
+            //        else if (!SceneController.Instance.isInLevel)
+            //        {
+            //            PlaySubmitSound();
+            //        }
+            //    }
+            //}
         }
     }
 
     public void ShowWinScreen()
     {
+        winScreenIsShowing = true;
         //yes but have to to avoid enabled menu clicking stuff
         GameObject.Find("WinScreen").transform.Find(winImage).gameObject.SetActive(true);
         GameObject.Find("WinScreen").transform.Find(winMenu).gameObject.SetActive(true);
@@ -80,6 +131,7 @@ public class SpanningUIController : MonoBehaviour
         //doesent need to be reset because only outcome is change scene
     }
 
+    #region onLevelStart
     public void OnLevelStart()
     {
         StartCoroutine(OnLevelStartWaitForStart());
@@ -91,9 +143,31 @@ public class SpanningUIController : MonoBehaviour
         yield return new WaitForEndOfFrame();
         GameObject.Find(winImage).SetActive(false);
         GameObject.Find(winMenu).SetActive(false);
+        winScreenIsShowing = false;
+    }
+    #endregion
+    #region resetSequence
+    public void ShowPackageDecayOnReset()
+    {
+        StartCoroutine(ResetSequence());
     }
 
-    public void ToggleWhyFailed()
+    public IEnumerator ResetSequence()
+    {
+        yield return new WaitForEndOfFrame();
+        yield return new WaitForEndOfFrame();
+        yield return new WaitForEndOfFrame();
+
+        //show thing
+        ToggleWhyFailed();
+
+        yield return new WaitForSeconds(2f);
+
+        //stop show thing
+        ToggleWhyFailed();
+    }
+
+    private void ToggleWhyFailed()
     {
         if (!packageLostTooLongImageIsShowing)
         {
@@ -107,9 +181,12 @@ public class SpanningUIController : MonoBehaviour
 
         packageLostTooLongImageIsShowing = !packageLostTooLongImageIsShowing;
     }
+    #endregion
 
     public void ToggleLevelSelect()
     {
+        PlaySubmitSound();
+
         if (!levelSelectIsShowing)
         {
             //Find and enable levelselect
@@ -150,6 +227,8 @@ public class SpanningUIController : MonoBehaviour
 
     public void ToggleSettingsMenu()
     {
+        PlaySubmitSound();
+
         if (!settingsIsShowing)
         {
             //find and enable settings
@@ -184,8 +263,26 @@ public class SpanningUIController : MonoBehaviour
     public void ResetUI()
     {
         settingsIsShowing = false;
+        winScreenIsShowing = false;
         levelSelectIsShowing = false;
         packageLostTooLongImageIsShowing = false;
+    }
+
+    public void PlaySelectSound()
+    {
+        selectionSound.Play();
+    }
+
+    public void PlaySubmitSound()
+    {
+        if (SceneController.Instance.isInLevel && winScreenIsShowing)
+        {
+            submitSound.Play();
+        }
+        else if (!SceneController.Instance.isInLevel)
+        {
+            submitSound.Play();
+        }
     }
 
     //public void UpdateSettingsValues()

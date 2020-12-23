@@ -12,21 +12,19 @@ public class SpiderController : MonoBehaviour
     public Vector3[] spiderSenseVectors;
     public LayerMask spiderSenceLayerMaskToHit;
     public float spiderGoDownToGrabSpeed;
+    public float spiderAttackCooldown;
     [Header("Idle settings")]
     public Vector3 spiderIdleLeftForce;
     public Vector3 spiderIdleRightForce;
     public float spiderIdleSideToSideTime;
-    public AnimationCurve spiderIdleUpDownMovement;
-    public float spiderIdleUpDownTime;
-    public float spiderIdleUpDownMultiple;
 
     private bool playerIsInSense = false;
     private float currentSpiderGrabDistance;
-    private float currentSpiderDistance = 0f;
     private float currentIdleUpDownMovementFactor;
     private LineRenderer spiderThread;
     private DistanceJoint2D spiderDistanceJoint;
     private Rigidbody2D thisRB;
+    private bool canAttack = true;
 
     // Start is called before the first frame update
     void Start()
@@ -34,9 +32,8 @@ public class SpiderController : MonoBehaviour
         spiderThread = GetComponent<LineRenderer>();
         thisRB = GetComponent<Rigidbody2D>();
         spiderDistanceJoint = GetComponent<DistanceJoint2D>();
-
-        currentSpiderDistance = spiderNormalDistance;
-        spiderDistanceJoint.distance = currentSpiderDistance;
+        
+        spiderDistanceJoint.distance = spiderNormalDistance;
         UpdateSpiderThread();
 
         StartCoroutine(SpiderIdleSideToSide());
@@ -48,7 +45,7 @@ public class SpiderController : MonoBehaviour
         CheckForPlayerInSense();
 
         //if can see player, increase distance of string until grab box
-        if(playerIsInSense)
+        if(playerIsInSense && canAttack)
         {
             currentSpiderGrabDistance += Time.deltaTime * spiderGoDownToGrabSpeed;
         }
@@ -60,7 +57,6 @@ public class SpiderController : MonoBehaviour
             //Debug.Log(currentSpiderGrabDistance);
         }
 
-        SpiderIdleUpDown();
         UpdateSpiderThread();
     }
 
@@ -71,11 +67,9 @@ public class SpiderController : MonoBehaviour
         for (int i = 0; i < spiderSenseVectors.Length; i++)
         {
             RaycastHit2D hit = Physics2D.Raycast(origin, spiderSenseVectors[i], spiderSenseVectors[i].magnitude, spiderSenceLayerMaskToHit);
-            if (hit.collider != null && hit.collider.GetComponent<InteractObjectiveController>().GetObjectivesOnHeadCount() > 0)
+            if (hit.collider != null && hit.collider.gameObject.tag == "Player")
             {
-                //Debug.Log(hit.collider.gameObject.name);
-                
-                playerIsInSense = true;
+                if(hit.collider.GetComponent<InteractObjectiveController>().GetObjectivesOnHeadCount() > 0) playerIsInSense = true;
             }
 
             Debug.DrawLine(origin, origin + spiderSenseVectors[i], (playerIsInSense ? Color.green : Color.red));
@@ -84,7 +78,7 @@ public class SpiderController : MonoBehaviour
     
     private void UpdateSpiderThread()
     {
-        spiderDistanceJoint.distance = currentSpiderDistance + currentIdleUpDownMovementFactor + currentSpiderGrabDistance;
+        spiderDistanceJoint.distance = spiderNormalDistance + currentSpiderGrabDistance;
 
         spiderThread.SetPosition(0, spiderBaseTransform.position);
         spiderThread.SetPosition(1, transform.position);
@@ -100,17 +94,22 @@ public class SpiderController : MonoBehaviour
         }
     }
 
-    private void SpiderIdleUpDown()
+    private IEnumerator SpiderAttackCooldown()
     {
-        float currentTimeInverval = Time.realtimeSinceStartup % spiderIdleUpDownTime;
-        float percentageOfAnimation = currentTimeInverval / spiderIdleUpDownTime;
-        currentIdleUpDownMovementFactor = spiderIdleUpDownMovement.Evaluate(percentageOfAnimation) * spiderIdleUpDownMultiple;
+        canAttack = false;
+        yield return new WaitForSeconds(spiderAttackCooldown);
+        canAttack = true;
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        //if hit package
+        if (collision.gameObject.tag != "Player") return;
+        if (!canAttack) return;
+
+        canAttack = false;
+        GetComponent<AudioSource>().Play();
         GameObject.Find("Player").GetComponent<InteractObjectiveController>().DropTopObjective(false);
+        StartCoroutine(SpiderAttackCooldown());
     }
 
     private void OnDrawGizmos()

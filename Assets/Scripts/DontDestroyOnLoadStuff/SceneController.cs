@@ -27,6 +27,8 @@ public class SceneController : MonoBehaviour
 
     public void SwitchToNextLevel()
     {
+        SpanningUIController.Instance.PlaySubmitSound();
+
         SpanningUIController.Instance.ResetUI();
 
         currentLevelIndex++;
@@ -39,6 +41,8 @@ public class SceneController : MonoBehaviour
 
     public void SwitchToLevelByIndex(int index)
     {
+        SpanningUIController.Instance.PlaySubmitSound();
+
         SpanningUIController.Instance.ResetUI();
 
         currentLevelIndex = index;
@@ -52,37 +56,23 @@ public class SceneController : MonoBehaviour
     public void ResetCurrentLevel()
     {
         SwitchToLevelByIndex(currentLevelIndex);
-
-        StartCoroutine(ResetSequence());
-    }
-
-    public IEnumerator ResetSequence()
-    {
-        yield return new WaitForEndOfFrame();
-        yield return new WaitForEndOfFrame();
-
-        //show thing
-        SpanningUIController.Instance.ToggleWhyFailed();
-
-        yield return new WaitForSeconds(2f);
-
-        //stop show thing
-        SpanningUIController.Instance.ToggleWhyFailed();
     }
 
     public void GoToMainMenu()
     {
         SpanningUIController.Instance.ResetUI();
 
-        StopAllCoroutines();
-
         SceneManager.LoadScene(mainMenuNamn);
 
         isInLevel = false;
+
+        SpanningUIController.Instance.PlaySubmitSound();
     }
 
     public void ExitGame()
     {
+        SpanningUIController.Instance.PlaySubmitSound();
+
         Application.Quit();
     }
 }

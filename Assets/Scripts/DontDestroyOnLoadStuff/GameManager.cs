@@ -28,9 +28,9 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         //if not created, create playerprefs based on current levels (or if want to reset)
-        if (PlayerPrefs.GetInt("HasPlayedBefore") == 0 || resetPlayerPrefsOnStart)
+        if (PlayerPrefs.GetInt("HasPlayedBefore" + Application.version.ToString()) == 0 || resetPlayerPrefsOnStart)
         {
-            PlayerPrefs.SetInt("HasPlayedBefore", 1);
+            PlayerPrefs.SetInt(("HasPlayedBefore" + Application.version.ToString()), 1);
 
             ResetMemory();
         }
@@ -40,6 +40,18 @@ public class GameManager : MonoBehaviour
         musicMixer.SetFloat("Master", PlayerPrefs.GetFloat("MusicVolume"));
 
         PlayerPrefs.Save();
+    }
+
+    private void Update()
+    {
+        if (Input.GetButtonDown("Cancel"))
+        {
+            if (SceneController.Instance.isInLevel) SceneController.Instance.GoToMainMenu();
+        }
+        else if (Input.GetButtonDown("ResetLevelButton"))
+        {
+            if (SceneController.Instance.isInLevel) SceneController.Instance.ResetCurrentLevel();
+        }
     }
 
     private void ResetMemory()
@@ -56,8 +68,8 @@ public class GameManager : MonoBehaviour
             PlayerPrefs.SetFloat(SceneController.Instance.LevelsInOrderAscending[i] + "_HighScore", 0f);
         }
 
-        PlayerPrefs.SetFloat("MusicVolume", 0f);
-        PlayerPrefs.SetFloat("SoundVolume", 0f);
+        PlayerPrefs.SetFloat("MusicVolume", -15f);
+        PlayerPrefs.SetFloat("SoundVolume", -10f);
 
         PlayerPrefs.Save();
     }

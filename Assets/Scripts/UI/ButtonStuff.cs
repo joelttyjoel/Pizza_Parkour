@@ -24,6 +24,7 @@ public class ButtonStuff : MonoBehaviour
     private UIFixedAnimation thisAnimation;
 
     private bool animationIsPlaying = false;
+    private bool hasEntered = false;
 
     private void Start()
     {
@@ -37,8 +38,20 @@ public class ButtonStuff : MonoBehaviour
         animationIsPlaying = thisAnimation.playOnEnable;
     }
 
+    //all this is dirty but i hate ui dw its fine
     private void Update()
     {
+        if(IsMouseOverThisObject() && !hasEntered)
+        {
+            Debug.Log("IS ON" + gameObject.name);
+            MouseEnter();
+            hasEntered = true;
+        }
+        if(!IsMouseOverThisObject() && hasEntered)
+        {
+            hasEntered = false;
+        }
+
         if (!hasAnimation) return;
         //if (thisButton.interactable == false) return;
         //if(EventSystem.current.currentSelectedGameObject != null) Debug.Log(EventSystem.current.currentSelectedGameObject.name);
@@ -63,25 +76,52 @@ public class ButtonStuff : MonoBehaviour
         }
     }
 
+    private bool IsMouseOverThisObject()
+    {
+        PointerEventData pointerEventData = new PointerEventData(EventSystem.current);
+        pointerEventData.position = Input.mousePosition;
+
+        List<RaycastResult> raycastResultList = new List<RaycastResult>();
+        EventSystem.current.RaycastAll(pointerEventData, raycastResultList);
+        bool isOnThisObject = false;
+        for (int i = 0; i < raycastResultList.Count; i++)
+        {
+            if (raycastResultList[i].gameObject == this.gameObject)
+            {
+                isOnThisObject = true;
+            }
+        }
+
+        return isOnThisObject;
+    }
+
     private void OnClick()
     {
+        //Debug.Log("clicked" + gameObject.name);
         if (onClickSelectOther)
         {
             EventSystem.current.SetSelectedGameObject(objectToSelect);
         }
     }
 
-    private void OnMouseEnter()
+    private void MouseEnter()
     {
-        if(selectOnMouseover)
+        if (selectOnMouseover)
         {
-            if(isAboveMainMenu)
+            if (SpanningUIController.Instance.winScreenIsShowing)
             {
                 EventSystem.current.SetSelectedGameObject(this.gameObject);
+                SpanningUIController.Instance.PlaySelectSound();
+            }
+            else if (isAboveMainMenu)
+            {
+                EventSystem.current.SetSelectedGameObject(this.gameObject);
+                SpanningUIController.Instance.PlaySelectSound();
             }
             else if(!SpanningUIController.Instance.levelSelectIsShowing && !SpanningUIController.Instance.settingsIsShowing)
             {
                 EventSystem.current.SetSelectedGameObject(this.gameObject);
+                SpanningUIController.Instance.PlaySelectSound();
             }
         }
     }
