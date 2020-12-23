@@ -27,6 +27,8 @@ public class SceneController : MonoBehaviour
 
     public void SwitchToNextLevel()
     {
+        SpanningUIController.Instance.PlaySubmitSound();
+
         SpanningUIController.Instance.ResetUI();
 
         currentLevelIndex++;
@@ -39,6 +41,8 @@ public class SceneController : MonoBehaviour
 
     public void SwitchToLevelByIndex(int index)
     {
+        SpanningUIController.Instance.PlaySubmitSound();
+
         SpanningUIController.Instance.ResetUI();
 
         currentLevelIndex = index;
@@ -61,10 +65,14 @@ public class SceneController : MonoBehaviour
         SceneManager.LoadScene(mainMenuNamn);
 
         isInLevel = false;
+
+        SpanningUIController.Instance.PlaySubmitSound();
     }
 
     public void ExitGame()
     {
+        SpanningUIController.Instance.PlaySubmitSound();
+
         Application.Quit();
     }
 }

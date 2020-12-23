@@ -30,7 +30,7 @@ public class GameManager : MonoBehaviour
         //if not created, create playerprefs based on current levels (or if want to reset)
         if (PlayerPrefs.GetInt("HasPlayedBefore" + Application.version.ToString()) == 0 || resetPlayerPrefsOnStart)
         {
-            PlayerPrefs.SetInt("HasPlayedBefore", 1);
+            PlayerPrefs.SetInt(("HasPlayedBefore" + Application.version.ToString()), 1);
 
             ResetMemory();
         }

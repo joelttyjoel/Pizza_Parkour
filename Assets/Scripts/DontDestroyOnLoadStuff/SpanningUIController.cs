@@ -23,6 +23,7 @@ public class SpanningUIController : MonoBehaviour
     public string sliderSoundName;
     [Header("UI audio")]
     public AudioSource selectionSound;
+    public AudioSource submitSound;
     
     [System.NonSerialized]
     public bool levelSelectIsShowing = false;
@@ -58,9 +59,9 @@ public class SpanningUIController : MonoBehaviour
     private void Update()
     {
         //IF PRESS ANY BUTTON, IF CHANGES SELECTED OBJECT, IF IN MENU OR IN WIN SCREEN, PLAY SOUND
-        if(Mathf.RoundToInt(Input.GetAxisRaw("Horizontal")) != 0 || Mathf.RoundToInt(Input.GetAxisRaw("Vertical")) != 0 || Input.GetButtonDown("Submit"))
+        if(Mathf.RoundToInt(Input.GetAxisRaw("Horizontal")) != 0 || Mathf.RoundToInt(Input.GetAxisRaw("Vertical")) != 0)
         {
-            //if clicked off selection
+            //if clicked off selection and is trying to navitage with buttons
             if (EventSystem.current.currentSelectedGameObject == null) EventSystem.current.SetSelectedGameObject(previouslySelectedObject);
 
             if (previouslySelectedObject != EventSystem.current.currentSelectedGameObject)
@@ -71,15 +72,32 @@ public class SpanningUIController : MonoBehaviour
                 //now, shh, but yes
                 if (SceneController.Instance.isInLevel && winScreenIsShowing)
                 {
-                    Debug.Log("Play in win screen");
                     PlaySelectSound();
                 }
                 else if (!SceneController.Instance.isInLevel)
                 {
-                    Debug.Log("Play in menu");
                     PlaySelectSound();
                 }
             }
+            ////IF PRESS SUBMIT, IF CHANGES SELECTED OBJECT, IF IN MENU OR IN WIN SCREEN, PLAY SOUND
+            //if (Input.GetButtonDown("Submit"))
+            //{
+            //    if (previouslySelectedObject != EventSystem.current.currentSelectedGameObject)
+            //    {
+            //        previouslySelectedObject = EventSystem.current.currentSelectedGameObject;
+
+            //        //on select change
+            //        //now, shh, but yes
+            //        if (SceneController.Instance.isInLevel && winScreenIsShowing)
+            //        {
+            //            PlaySubmitSound();
+            //        }
+            //        else if (!SceneController.Instance.isInLevel)
+            //        {
+            //            PlaySubmitSound();
+            //        }
+            //    }
+            //}
         }
     }
 
@@ -167,6 +185,8 @@ public class SpanningUIController : MonoBehaviour
 
     public void ToggleLevelSelect()
     {
+        PlaySubmitSound();
+
         if (!levelSelectIsShowing)
         {
             //Find and enable levelselect
@@ -207,6 +227,8 @@ public class SpanningUIController : MonoBehaviour
 
     public void ToggleSettingsMenu()
     {
+        PlaySubmitSound();
+
         if (!settingsIsShowing)
         {
             //find and enable settings
@@ -248,8 +270,19 @@ public class SpanningUIController : MonoBehaviour
 
     public void PlaySelectSound()
     {
-        Debug.Log("PLAY SOUND");
         selectionSound.Play();
+    }
+
+    public void PlaySubmitSound()
+    {
+        if (SceneController.Instance.isInLevel && winScreenIsShowing)
+        {
+            submitSound.Play();
+        }
+        else if (!SceneController.Instance.isInLevel)
+        {
+            submitSound.Play();
+        }
     }
 
     //public void UpdateSettingsValues()
