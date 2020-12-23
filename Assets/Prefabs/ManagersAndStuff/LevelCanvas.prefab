@@ -461,7 +461,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   animateOnSelect: 0
-  playSoundOnSelect: 1
   onClickSelectOther: 0
   selectOnMouseover: 1
   selectOnEnable: 0
@@ -1170,7 +1169,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   animateOnSelect: 0
-  playSoundOnSelect: 1
   onClickSelectOther: 0
   selectOnMouseover: 1
   selectOnEnable: 1
@@ -1717,7 +1715,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   animateOnSelect: 0
-  playSoundOnSelect: 1
   onClickSelectOther: 0
   selectOnMouseover: 1
   selectOnEnable: 0

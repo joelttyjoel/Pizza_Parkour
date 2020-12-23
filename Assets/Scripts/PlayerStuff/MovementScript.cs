@@ -31,6 +31,9 @@ public class MovementScript : MonoBehaviour
     bool facingLeft;   //make sure to initilize to correct direction
     bool hasAirJumped;
 
+    //TEMP
+    public bool canMove = true;
+
     float groundRayOriginOffset;
     float lastVel;
 
@@ -180,6 +183,8 @@ public class MovementScript : MonoBehaviour
     void Update()
     {
         rb.gravityScale = gratvityScale;    //temp, move to start when value is tweaked enough
+
+        if (!canMove) return;
 
         int hInt = Mathf.RoundToInt(Input.GetAxisRaw("Horizontal"));
         bool j = Input.GetButtonDown("Jump");                           //record j until jumpBuffer end

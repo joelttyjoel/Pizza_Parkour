@@ -35051,7 +35051,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   animateOnSelect: 0
-  playSoundOnSelect: 1
   onClickSelectOther: 0
   selectOnMouseover: 1
   selectOnEnable: 0
@@ -35071,6 +35070,7 @@ GameObject:
   - component: {fileID: 3618260417754869207}
   - component: {fileID: 727923183172052473}
   - component: {fileID: 3656286658061614355}
+  - component: {fileID: 4421470005895671537}
   m_Layer: 5
   m_Name: Retry
   m_TagString: Untagged
@@ -35078,6 +35078,32 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!61 &4421470005895671537
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4421470005895671536}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: -12.5}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 72.25, y: 40.75}
+  m_EdgeRadius: 0
 --- !u!222 &4447767362516599041
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -36687,6 +36713,7 @@ GameObject:
   - component: {fileID: 9174034579623944213}
   - component: {fileID: 9174034579623944212}
   - component: {fileID: 9174034579623944215}
+  - component: {fileID: 9174034579623944202}
   m_Layer: 5
   m_Name: Menu
   m_TagString: Untagged
@@ -36694,6 +36721,32 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!61 &9174034579623944202
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9174034579623944201}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: -12.5}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 72.25, y: 40.75}
+  m_EdgeRadius: 0
 --- !u!222 &9174034579623944210
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -36821,7 +36874,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   animateOnSelect: 0
-  playSoundOnSelect: 1
   onClickSelectOther: 0
   selectOnMouseover: 1
   selectOnEnable: 0

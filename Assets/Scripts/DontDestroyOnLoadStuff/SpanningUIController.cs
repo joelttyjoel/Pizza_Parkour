@@ -30,7 +30,8 @@ public class SpanningUIController : MonoBehaviour
     public bool settingsIsShowing = false;
     [System.NonSerialized]
     public bool packageLostTooLongImageIsShowing = false;
-    private bool winScreenIsShowing = false;
+    [System.NonSerialized]
+    public bool winScreenIsShowing = false;
 
     private GameObject previouslySelectedObject;
 
@@ -56,19 +57,28 @@ public class SpanningUIController : MonoBehaviour
 
     private void Update()
     {
-        if(previouslySelectedObject != EventSystem.current.currentSelectedGameObject)
+        //IF PRESS ANY BUTTON, IF CHANGES SELECTED OBJECT, IF IN MENU OR IN WIN SCREEN, PLAY SOUND
+        if(Mathf.RoundToInt(Input.GetAxisRaw("Horizontal")) != 0 || Mathf.RoundToInt(Input.GetAxisRaw("Vertical")) != 0 || Input.GetButtonDown("Submit"))
         {
-            previouslySelectedObject = EventSystem.current.currentSelectedGameObject;
+            //if clicked off selection
+            if (EventSystem.current.currentSelectedGameObject == null) EventSystem.current.SetSelectedGameObject(previouslySelectedObject);
 
-            //on select change
-            //now, shh, but yes
-            if(SceneController.Instance.isInLevel && winScreenIsShowing)
+            if (previouslySelectedObject != EventSystem.current.currentSelectedGameObject)
             {
-                PlaySelectSound();
-            }
-            else if(!SceneController.Instance.isInLevel)
-            {
-                PlaySelectSound();
+                previouslySelectedObject = EventSystem.current.currentSelectedGameObject;
+
+                //on select change
+                //now, shh, but yes
+                if (SceneController.Instance.isInLevel && winScreenIsShowing)
+                {
+                    Debug.Log("Play in win screen");
+                    PlaySelectSound();
+                }
+                else if (!SceneController.Instance.isInLevel)
+                {
+                    Debug.Log("Play in menu");
+                    PlaySelectSound();
+                }
             }
         }
     }
@@ -115,6 +125,7 @@ public class SpanningUIController : MonoBehaviour
         yield return new WaitForEndOfFrame();
         GameObject.Find(winImage).SetActive(false);
         GameObject.Find(winMenu).SetActive(false);
+        winScreenIsShowing = false;
     }
     #endregion
     #region resetSequence
@@ -230,12 +241,14 @@ public class SpanningUIController : MonoBehaviour
     public void ResetUI()
     {
         settingsIsShowing = false;
+        winScreenIsShowing = false;
         levelSelectIsShowing = false;
         packageLostTooLongImageIsShowing = false;
     }
 
     public void PlaySelectSound()
     {
+        Debug.Log("PLAY SOUND");
         selectionSound.Play();
     }
 
