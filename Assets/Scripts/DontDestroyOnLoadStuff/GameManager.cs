@@ -7,6 +7,7 @@ public class GameManager : MonoBehaviour
 {
     [Header("God, controls and keeps track of stuff")]
     public bool resetPlayerPrefsOnStart = false;
+    public bool setAllUnlockedOnStart = false;
     public AudioMixer soundMixer;
     public AudioMixer musicMixer;
 
@@ -27,6 +28,11 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
+        if(setAllUnlockedOnStart)
+        {
+            SetAllUnlocked();
+        }
+
         //if not created, create playerprefs based on current levels (or if want to reset)
         if (PlayerPrefs.GetInt("HasPlayedBefore" + Application.version.ToString()) == 0 || resetPlayerPrefsOnStart)
         {
@@ -52,6 +58,23 @@ public class GameManager : MonoBehaviour
         {
             if (SceneController.Instance.isInLevel) SceneController.Instance.ResetCurrentLevel();
         }
+    }
+
+    private void SetAllUnlocked()
+    {
+        for (int i = 0; i < SceneController.Instance.LevelsInOrderAscending.Length; i++)
+        {
+            //set all unlocked
+            PlayerPrefs.SetInt(SceneController.Instance.LevelsInOrderAscending[i], 1);
+            //levels highscore
+            //set all to shit scores
+            PlayerPrefs.SetFloat(SceneController.Instance.LevelsInOrderAscending[i] + "_HighScore", 0f);
+        }
+
+        PlayerPrefs.SetFloat("MusicVolume", -15f);
+        PlayerPrefs.SetFloat("SoundVolume", -10f);
+
+        PlayerPrefs.Save();
     }
 
     private void ResetMemory()
